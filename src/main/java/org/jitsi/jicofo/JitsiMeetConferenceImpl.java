@@ -426,11 +426,9 @@ public class JitsiMeetConferenceImpl
             eventHandlerRegistration.unregister();
             eventHandlerRegistration = null;
         }
-
+        
         protocolProviderHandler.removeRegistrationListener(this);
-
         disposeConference();
-
         leaveTheRoom();
 
         if (jingle != null)
@@ -441,6 +439,16 @@ public class JitsiMeetConferenceImpl
         if (listener != null)
         {
             listener.conferenceEnded(this);
+        }
+        participants.clear();
+        try
+        {
+            services.stop(FocusBundleActivator.bundleContext);
+            services = null;
+        }
+        catch (Exception e)
+        {
+            logger.error("Error when trying to stop JitsiMeetServices", e);
         }
     }
 
@@ -2632,7 +2640,7 @@ public class JitsiMeetConferenceImpl
                 colibriConference.dispose();
             }
 
-            // TODO: should we terminate (or clear) #participants?
+            terminateAll().stream().forEach(this::terminate);
         }
 
         /**
