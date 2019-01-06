@@ -17,13 +17,16 @@
  */
 package org.jitsi.jicofo.rest;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.eclipse.jetty.server.*;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.server.Request;
 import org.jitsi.jicofo.FocusManager;
-import org.jitsi.rest.*;
-import org.osgi.framework.*;
+import org.jitsi.rest.AbstractJSONHandler;
+import org.osgi.framework.BundleContext;
 
 /**
  * Implements a Jetty {@code Handler} which is to provide the HTTP interface of
@@ -31,58 +34,46 @@ import org.osgi.framework.*;
  *
  * @author Lyubomir Marinov
  */
-public class HandlerImpl
-    extends AbstractJSONHandler
-{
-    /**
-     * Initializes a new {@code HandlerImpl} instance within a specific
-     * {@code BundleContext}.
-     *
-     * @param bundleContext the {@code BundleContext} within which the new
-     * instance is to be initialized
-     */
-    public HandlerImpl(BundleContext bundleContext)
-    {
-        super(bundleContext);
-    }
+public class HandlerImpl extends AbstractJSONHandler {
+	/**
+	 * Initializes a new {@code HandlerImpl} instance within a specific
+	 * {@code BundleContext}.
+	 *
+	 * @param bundleContext the {@code BundleContext} within which the new instance
+	 *                      is to be initialized
+	 */
+	public HandlerImpl(BundleContext bundleContext) {
+		super(bundleContext);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void doGetHealthJSON(
-            Request baseRequest,
-            HttpServletRequest request,
-            HttpServletResponse response)
-        throws IOException,
-               ServletException
-    {
-        beginResponse(/* target */ null, baseRequest, request, response);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void doGetHealthJSON(Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		beginResponse(/* target */ null, baseRequest, request, response);
 
-        FocusManager focusManager = getFocusManager();
+		FocusManager focusManager = getFocusManager();
 
-        if (focusManager == null)
-        {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-        }
-        else
-        {
-            Health.getJSON(focusManager, baseRequest, request, response);
-        }
+		if (focusManager == null) {
+			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} else {
+			Health.getJSON(focusManager, baseRequest, request, response);
+		}
 
-        endResponse(/* target */ null, baseRequest, request, response);
-    }
+		endResponse(/* target */ null, baseRequest, request, response);
+	}
 
-    /**
-     * Gets the {@code FocusManager} instance available to this Jetty
-     * {@code Handler}.
-     *
-     * @return the {@code FocusManager} instance available to this Jetty
-     * {@code Handler} or {@code null} if no {@code FocusManager} instance is
-     * available to this Jetty {@code Handler}
-     */
-    public FocusManager getFocusManager()
-    {
-        return getService(FocusManager.class);
-    }
+	/**
+	 * Gets the {@code FocusManager} instance available to this Jetty
+	 * {@code Handler}.
+	 *
+	 * @return the {@code FocusManager} instance available to this Jetty
+	 *         {@code Handler} or {@code null} if no {@code FocusManager} instance
+	 *         is available to this Jetty {@code Handler}
+	 */
+	public FocusManager getFocusManager() {
+		return getService(FocusManager.class);
+	}
 }

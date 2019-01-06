@@ -17,19 +17,26 @@
  */
 package org.jitsi.jicofo;
 
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.event.*;
-import net.java.sip.communicator.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.jitsi.jicofo.util.*;
-import org.jitsi.protocol.xmpp.*;
+import org.jitsi.jicofo.util.FocusAccountFactory;
+import org.jitsi.jicofo.util.RegisterThread;
+import org.jitsi.protocol.xmpp.OperationSetDirectSmackXmpp;
+import org.jitsi.protocol.xmpp.XmppConnection;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.osgi.framework.ServiceReference;
 
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.parts.*;
-import org.osgi.framework.*;
-
-import java.util.*;
-import java.util.concurrent.*;
+import net.java.sip.communicator.service.protocol.AccountID;
+import net.java.sip.communicator.service.protocol.OperationSet;
+import net.java.sip.communicator.service.protocol.ProtocolNames;
+import net.java.sip.communicator.service.protocol.ProtocolProviderFactory;
+import net.java.sip.communicator.service.protocol.ProtocolProviderService;
+import net.java.sip.communicator.service.protocol.event.RegistrationStateChangeEvent;
+import net.java.sip.communicator.service.protocol.event.RegistrationStateChangeListener;
+import net.java.sip.communicator.util.Logger;
 
 /**
  * Class takes care of creating and removing temporary XMPP account while
@@ -37,192 +44,154 @@ import java.util.concurrent.*;
  *
  * @author Pawel Domas
  */
-public class ProtocolProviderHandler
-    implements RegistrationStateChangeListener
-{
-    private final static Logger logger
-        = Logger.getLogger(ProtocolProviderHandler.class);
+public class ProtocolProviderHandler implements RegistrationStateChangeListener {
+	private final static Logger logger = Logger.getLogger(ProtocolProviderHandler.class);
 
-    /**
-     * XMPP provider factory used to create and destroy XMPP account used by
-     * the focus.
-     */
-    private ProtocolProviderFactory xmppProviderFactory;
+	/**
+	 * XMPP provider factory used to create and destroy XMPP account used by the
+	 * focus.
+	 */
+	private ProtocolProviderFactory xmppProviderFactory;
 
-    /**
-     * XMPP account used by the focus.
-     */
-    private AccountID xmppAccount;
+	/**
+	 * XMPP account used by the focus.
+	 */
+	private AccountID xmppAccount;
 
-    /**
-     * XMPP protocol provider service used by the focus.
-     */
-    private ProtocolProviderService protocolService;
+	/**
+	 * XMPP protocol provider service used by the focus.
+	 */
+	private ProtocolProviderService protocolService;
 
-    /**
-     * Registration listeners notified about encapsulated protocol service
-     * instance registration state changes.
-     */
-    private final List<RegistrationStateChangeListener> regListeners
-        = new CopyOnWriteArrayList<>();
+	/**
+	 * Registration listeners notified about encapsulated protocol service instance
+	 * registration state changes.
+	 */
+	private final List<RegistrationStateChangeListener> regListeners = new CopyOnWriteArrayList<>();
 
-    /**
-     * Start this instance by created XMPP account using the given parameters.
-     * @param serverAddress XMPP server address.
-     * @param xmppDomain XMPP authentication domain.
-     * @param xmppLoginPassword XMPP login(optional).
-     * @param nickName authentication login.
-     *
-     */
-    public void start(String serverAddress,
-                      DomainBareJid xmppDomain,
-                      String xmppLoginPassword,
-                      Resourcepart nickName)
-    {
-        xmppProviderFactory
-            = ProtocolProviderFactory.getProtocolProviderFactory(
-                    FocusBundleActivator.bundleContext,
-                    ProtocolNames.JABBER);
+	/**
+	 * Start this instance by created XMPP account using the given parameters.
+	 * 
+	 * @param serverAddress     XMPP server address.
+	 * @param xmppDomain        XMPP authentication domain.
+	 * @param xmppLoginPassword XMPP login(optional).
+	 * @param nickName          authentication login.
+	 *
+	 */
+	public void start(String serverAddress, DomainBareJid xmppDomain, String xmppLoginPassword, Resourcepart nickName) {
+		xmppProviderFactory = ProtocolProviderFactory.getProtocolProviderFactory(FocusBundleActivator.bundleContext,
+				ProtocolNames.JABBER);
 
-        if (xmppLoginPassword != null)
-        {
-            xmppAccount
-                = xmppProviderFactory.createAccount(
-                FocusAccountFactory.createFocusAccountProperties(
-                    serverAddress,
-                    xmppDomain, nickName, xmppLoginPassword));
-        }
-        else
-        {
-            xmppAccount
-                = xmppProviderFactory.createAccount(
-                FocusAccountFactory.createFocusAccountProperties(
-                    serverAddress,
-                    xmppDomain, nickName));
-        }
+		if (xmppLoginPassword != null) {
+			xmppAccount = xmppProviderFactory.createAccount(FocusAccountFactory
+					.createFocusAccountProperties(serverAddress, xmppDomain, nickName, xmppLoginPassword));
+		} else {
+			xmppAccount = xmppProviderFactory.createAccount(
+					FocusAccountFactory.createFocusAccountProperties(serverAddress, xmppDomain, nickName));
+		}
 
-        if (!xmppProviderFactory.loadAccount(xmppAccount))
-        {
-            throw new RuntimeException(
-                "Failed to load account: " + xmppAccount);
-        }
+		if (!xmppProviderFactory.loadAccount(xmppAccount)) {
+			throw new RuntimeException("Failed to load account: " + xmppAccount);
+		}
 
-        ServiceReference<ProtocolProviderService> protoRef
-            = xmppProviderFactory.getProviderForAccount(xmppAccount);
+		ServiceReference<ProtocolProviderService> protoRef = xmppProviderFactory.getProviderForAccount(xmppAccount);
 
-        protocolService
-            = FocusBundleActivator.bundleContext.getService(protoRef);
-        protocolService.addRegistrationStateChangeListener(this);
-    }
+		protocolService = FocusBundleActivator.bundleContext.getService(protoRef);
+		protocolService.addRegistrationStateChangeListener(this);
+	}
 
-    /**
-     * Stops this instance and removes temporary XMPP account.
-     */
-    public void stop()
-    {
-        protocolService.removeRegistrationStateChangeListener(this);
+	/**
+	 * Stops this instance and removes temporary XMPP account.
+	 */
+	public void stop() {
+		protocolService.removeRegistrationStateChangeListener(this);
 
-        xmppProviderFactory.uninstallAccount(xmppAccount);
-    }
+		xmppProviderFactory.uninstallAccount(xmppAccount);
+	}
 
-    /**
-     * Passes registration state changes of encapsulated protocol provider to
-     * registered {@link #regListeners}.
-     *
-     * {@inheritDoc}
-     */
-    @Override
-    public void registrationStateChanged(RegistrationStateChangeEvent evt)
-    {
-        for(RegistrationStateChangeListener l : regListeners)
-        {
-            try
-            {
-                l.registrationStateChanged(evt);
-            }
-            catch (Exception e)
-            {
-                logger.error(e.getMessage(), e);
-            }
-        }
-    }
+	/**
+	 * Passes registration state changes of encapsulated protocol provider to
+	 * registered {@link #regListeners}.
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void registrationStateChanged(RegistrationStateChangeEvent evt) {
+		for (RegistrationStateChangeListener l : regListeners) {
+			try {
+				l.registrationStateChanged(evt);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+	}
 
-    /**
-     * Adds given listener to the list of registration state change listeners
-     * notified about underlying protocol provider registration state changes.
-     * @param l the listener that will be notified about created protocol
-     *           provider's registration state changes.
-     */
-    public void addRegistrationListener(RegistrationStateChangeListener l)
-    {
-        regListeners.add(l);
-    }
+	/**
+	 * Adds given listener to the list of registration state change listeners
+	 * notified about underlying protocol provider registration state changes.
+	 * 
+	 * @param l the listener that will be notified about created protocol provider's
+	 *          registration state changes.
+	 */
+	public void addRegistrationListener(RegistrationStateChangeListener l) {
+		regListeners.add(l);
+	}
 
-    /**
-     * Removes given <tt>RegistrationStateChangeListener</tt>.
-     */
-    public void removeRegistrationListener(RegistrationStateChangeListener l)
-    {
-        boolean ok = regListeners.remove(l);
-        logger.debug("Listener removed ? " + ok + ", " + l);
-    }
+	/**
+	 * Removes given <tt>RegistrationStateChangeListener</tt>.
+	 */
+	public void removeRegistrationListener(RegistrationStateChangeListener l) {
+		boolean ok = regListeners.remove(l);
+		logger.debug("Listener removed ? " + ok + ", " + l);
+	}
 
-    /**
-     * Utility method for obtaining operation sets from underlying protocol
-     * provider service.
-     */
-    public <T extends OperationSet> T getOperationSet(Class<T> opSetClass)
-    {
-        return protocolService.getOperationSet(opSetClass);
-    }
+	/**
+	 * Utility method for obtaining operation sets from underlying protocol provider
+	 * service.
+	 */
+	public <T extends OperationSet> T getOperationSet(Class<T> opSetClass) {
+		return protocolService.getOperationSet(opSetClass);
+	}
 
-    /**
-     * Returns <tt>true</tt> if underlying protocol provider service has
-     * registered.
-     */
-    public boolean isRegistered()
-    {
-        return protocolService.isRegistered();
-    }
+	/**
+	 * Returns <tt>true</tt> if underlying protocol provider service has registered.
+	 */
+	public boolean isRegistered() {
+		return protocolService.isRegistered();
+	}
 
-    /**
-     * Starts registration process of underlying protocol provider service.
-     */
-    public void register()
-    {
-        // FIXME: not pooled thread created
-        new RegisterThread(protocolService).start();
-    }
+	/**
+	 * Starts registration process of underlying protocol provider service.
+	 */
+	public void register() {
+		// FIXME: not pooled thread created
+		new RegisterThread(protocolService).start();
+	}
 
-    /**
-     * Returns underlying protocol provider service instance if this
-     * <tt>ProtocolProviderHandler</tt> has been started or <tt>null</tt>
-     * otherwise.
-     */
-    public ProtocolProviderService getProtocolProvider()
-    {
-        return protocolService;
-    }
+	/**
+	 * Returns underlying protocol provider service instance if this
+	 * <tt>ProtocolProviderHandler</tt> has been started or <tt>null</tt> otherwise.
+	 */
+	public ProtocolProviderService getProtocolProvider() {
+		return protocolService;
+	}
 
-    /**
-     * Obtains XMPP connection for the underlying XMPP protocol provider
-     * service.
-     * @return {@link XmppConnection} or null if the underlying protocol provider is not registered yet.
-     */
-    public XmppConnection getXmppConnection()
-    {
-        return Objects.requireNonNull(
-                getOperationSet(OperationSetDirectSmackXmpp.class),
-                "OperationSetDirectSmackXmpp").getXmppConnection();
-    }
+	/**
+	 * Obtains XMPP connection for the underlying XMPP protocol provider service.
+	 * 
+	 * @return {@link XmppConnection} or null if the underlying protocol provider is
+	 *         not registered yet.
+	 */
+	public XmppConnection getXmppConnection() {
+		return Objects.requireNonNull(getOperationSet(OperationSetDirectSmackXmpp.class), "OperationSetDirectSmackXmpp")
+				.getXmppConnection();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString()
-    {
-        return protocolService != null
-            ? protocolService.toString() : super.toString();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return protocolService != null ? protocolService.toString() : super.toString();
+	}
 }

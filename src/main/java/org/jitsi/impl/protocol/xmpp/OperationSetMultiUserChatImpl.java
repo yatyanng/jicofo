@@ -17,14 +17,23 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.jivesoftware.smack.*;
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-import org.jxmpp.stringprep.*;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
-import java.util.*;
+import net.java.sip.communicator.service.protocol.AbstractOperationSetMultiUserChat;
+import net.java.sip.communicator.service.protocol.ChatRoom;
+import net.java.sip.communicator.service.protocol.ChatRoomInvitation;
+import net.java.sip.communicator.service.protocol.ChatRoomMember;
+import net.java.sip.communicator.service.protocol.Contact;
+import net.java.sip.communicator.service.protocol.OperationFailedException;
+import net.java.sip.communicator.service.protocol.OperationNotSupportedException;
 
 /**
  * Multi user chat implementation stripped to the minimum required by the focus
@@ -32,170 +41,138 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class OperationSetMultiUserChatImpl
-    extends AbstractOperationSetMultiUserChat
-{
-    /**
-     * Parent protocol provider.
-     */
-    private final XmppProtocolProvider protocolProvider;
+public class OperationSetMultiUserChatImpl extends AbstractOperationSetMultiUserChat {
+	/**
+	 * Parent protocol provider.
+	 */
+	private final XmppProtocolProvider protocolProvider;
 
-    /**
-     * The map of active chat rooms mapped by their names.
-     */
-    private final Map<String, ChatRoomImpl> rooms = new HashMap<>();
+	/**
+	 * The map of active chat rooms mapped by their names.
+	 */
+	private final Map<String, ChatRoomImpl> rooms = new HashMap<>();
 
-    /**
-     * Creates new instance of {@link OperationSetMultiUserChatImpl}.
-     *
-     * @param protocolProvider parent protocol provider service.
-     */
-    OperationSetMultiUserChatImpl(XmppProtocolProvider protocolProvider)
-    {
-        this.protocolProvider = protocolProvider;
-    }
+	/**
+	 * Creates new instance of {@link OperationSetMultiUserChatImpl}.
+	 *
+	 * @param protocolProvider parent protocol provider service.
+	 */
+	OperationSetMultiUserChatImpl(XmppProtocolProvider protocolProvider) {
+		this.protocolProvider = protocolProvider;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getExistingChatRooms()
-        throws OperationFailedException, OperationNotSupportedException
-    {
-        synchronized (rooms)
-        {
-            return new ArrayList<>(rooms.keySet());
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> getExistingChatRooms() throws OperationFailedException, OperationNotSupportedException {
+		synchronized (rooms) {
+			return new ArrayList<>(rooms.keySet());
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ChatRoom> getCurrentlyJoinedChatRooms()
-    {
-        throw new RuntimeException("Not implemented");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ChatRoom> getCurrentlyJoinedChatRooms() {
+		throw new RuntimeException("Not implemented");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getCurrentlyJoinedChatRooms(
-        ChatRoomMember chatRoomMember)
-        throws OperationFailedException, OperationNotSupportedException
-    {
-        throw new RuntimeException("Not implemented");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> getCurrentlyJoinedChatRooms(ChatRoomMember chatRoomMember)
+			throws OperationFailedException, OperationNotSupportedException {
+		throw new RuntimeException("Not implemented");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ChatRoom createChatRoom(String roomName,
-                                   Map<String, Object> roomProperties)
-        throws OperationFailedException, OperationNotSupportedException
-    {
-        EntityBareJid roomJid;
-        try
-        {
-            roomJid = JidCreate.entityBareFrom(roomName);
-        }
-        catch (XmppStringprepException e)
-        {
-            throw new OperationFailedException(
-                    "Invalid room name",
-                    OperationFailedException.ILLEGAL_ARGUMENT,
-                    e);
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ChatRoom createChatRoom(String roomName, Map<String, Object> roomProperties)
+			throws OperationFailedException, OperationNotSupportedException {
+		EntityBareJid roomJid;
+		try {
+			roomJid = JidCreate.entityBareFrom(roomName);
+		} catch (XmppStringprepException e) {
+			throw new OperationFailedException("Invalid room name", OperationFailedException.ILLEGAL_ARGUMENT, e);
+		}
 
-        synchronized (rooms)
-        {
-            if (rooms.containsKey(roomName))
-            {
-                throw new OperationFailedException(
-                    "Room '" + roomName + "' exists",
-                    OperationFailedException.GENERAL_ERROR);
-            }
+		synchronized (rooms) {
+			if (rooms.containsKey(roomName)) {
+				throw new OperationFailedException("Room '" + roomName + "' exists",
+						OperationFailedException.GENERAL_ERROR);
+			}
 
-            ChatRoomImpl newRoom = new ChatRoomImpl(this, roomJid);
+			ChatRoomImpl newRoom = new ChatRoomImpl(this, roomJid);
 
-            rooms.put(newRoom.getName(), newRoom);
+			rooms.put(newRoom.getName(), newRoom);
 
-            return newRoom;
-        }
-    }
+			return newRoom;
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ChatRoom findRoom(String roomName)
-        throws OperationFailedException, OperationNotSupportedException
-    {
-        roomName = roomName.toLowerCase();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ChatRoom findRoom(String roomName) throws OperationFailedException, OperationNotSupportedException {
+		roomName = roomName.toLowerCase();
 
-        synchronized (rooms)
-        {
-            ChatRoom room = rooms.get(roomName);
+		synchronized (rooms) {
+			ChatRoom room = rooms.get(roomName);
 
-            if (room == null)
-            {
-                room = createChatRoom(roomName, null);
-            }
-            return room;
-        }
-    }
+			if (room == null) {
+				room = createChatRoom(roomName, null);
+			}
+			return room;
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void rejectInvitation(ChatRoomInvitation invitation,
-                                 String rejectReason)
-    {
-        throw new RuntimeException("Not implemented");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void rejectInvitation(ChatRoomInvitation invitation, String rejectReason) {
+		throw new RuntimeException("Not implemented");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMultiChatSupportedByContact(Contact contact)
-    {
-        throw new RuntimeException("Not implemented");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isMultiChatSupportedByContact(Contact contact) {
+		throw new RuntimeException("Not implemented");
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isPrivateMessagingContact(String contactAddress)
-    {
-        throw new RuntimeException("Not implemented");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isPrivateMessagingContact(String contactAddress) {
+		throw new RuntimeException("Not implemented");
+	}
 
-    /**
-     * Returns Smack connection object used by parent protocol provider service.
-     */
-    public XMPPConnection getConnection()
-    {
-        return protocolProvider.getConnection();
-    }
+	/**
+	 * Returns Smack connection object used by parent protocol provider service.
+	 */
+	public XMPPConnection getConnection() {
+		return protocolProvider.getConnection();
+	}
 
-    /**
-     * Returns parent protocol provider service.
-     */
-    public XmppProtocolProvider getProtocolProvider()
-    {
-        return protocolProvider;
-    }
+	/**
+	 * Returns parent protocol provider service.
+	 */
+	public XmppProtocolProvider getProtocolProvider() {
+		return protocolProvider;
+	}
 
-    public void removeRoom(ChatRoomImpl chatRoom)
-    {
-        synchronized (rooms)
-        {
-            rooms.remove(chatRoom.getName());
-        }
-    }
+	public void removeRoom(ChatRoomImpl chatRoom) {
+		synchronized (rooms) {
+			rooms.remove(chatRoom.getName());
+		}
+	}
 }

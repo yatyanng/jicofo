@@ -17,88 +17,80 @@
  */
 package org.jitsi.jicofo;
 
-import net.java.sip.communicator.service.protocol.*;
-import org.jitsi.protocol.xmpp.*;
-import org.jitsi.util.*;
-import org.jxmpp.jid.*;
+import java.util.LinkedList;
+import java.util.List;
 
-import java.util.*;
+import org.jitsi.protocol.xmpp.ChatRoom2;
+import org.jitsi.util.Logger;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+
+import net.java.sip.communicator.service.protocol.ChatRoomMemberRole;
 
 /**
  * Mock {@link JitsiMeetConference} implementation.
  *
  * @author Pawel Domas
  */
-public class MockJitsiMeetConference
-    implements JitsiMeetConference
-{
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Logger getLogger()
-    {
-        return null;
-    }
+public class MockJitsiMeetConference implements JitsiMeetConference {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Logger getLogger() {
+		return null;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Participant findParticipantForRoomJid(Jid jid)
-    {
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Participant findParticipantForRoomJid(Jid jid) {
+		return null;
+	}
 
-    @Override
-    public List<Bridge> getBridges()
-    {
-        return new LinkedList<>();
-    }
+	@Override
+	public List<Bridge> getBridges() {
+		return new LinkedList<>();
+	}
 
-    @Override
-    public EntityBareJid getRoomName()
-    {
-        return null;
-    }
+	@Override
+	public EntityBareJid getRoomName() {
+		return null;
+	}
 
-    @Override
-    public EntityFullJid getFocusJid()
-    {
-        return null;
-    }
+	@Override
+	public EntityFullJid getFocusJid() {
+		return null;
+	}
 
-    @Override
-    public ChatRoom2 getChatRoom()
-    {
-        return null;
-    }
+	@Override
+	public ChatRoom2 getChatRoom() {
+		return null;
+	}
 
-    @Override
-    public void setStartMuted(boolean[] startMuted)
-    {
-    }
+	@Override
+	public void setStartMuted(boolean[] startMuted) {
+	}
 
-    @Override
-    public ChatRoomMemberRole getRoleForMucJid(Jid jid)
-    {
-        return null;
-    }
+	@Override
+	public ChatRoomMemberRole getRoleForMucJid(Jid jid) {
+		return null;
+	}
 
-    @Override
-    public boolean isFocusMember(Jid jid)
-    {
-        return false;
-    }
+	@Override
+	public boolean isFocusMember(Jid jid) {
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getParticipantCount()
-    {
-        return 0;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getParticipantCount() {
+		return 0;
+	}
 
 	@Override
 	public void disposeConference() {

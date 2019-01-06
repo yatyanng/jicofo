@@ -17,7 +17,7 @@
  */
 package org.jitsi.jicofo.auth;
 
-import org.jxmpp.jid.*;
+import org.jxmpp.jid.Jid;
 
 /**
  * Interface used to listen to authentication notification fired by
@@ -25,16 +25,15 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public interface AuthenticationListener
-{
-    /**
-     * Called by {@link AuthenticationAuthority} when the user identified by
-     * given <tt>userJid</tt> gets confirmed identity by external authentication
-     * component.
-     *  @param userJid the real user JID(not MUC JID which can be faked).
-     * @param authenticatedIdentity the identity of the user confirmed by
-     */
-    void jidAuthenticated(Jid userJid,
-                          String authenticatedIdentity,
-                          String sessionId);
+public interface AuthenticationListener {
+	/**
+	 * Called by {@link AuthenticationAuthority} when the user identified by given
+	 * <tt>userJid</tt> gets confirmed identity by external authentication
+	 * component.
+	 * 
+	 * @param userJid               the real user JID(not MUC JID which can be
+	 *                              faked).
+	 * @param authenticatedIdentity the identity of the user confirmed by
+	 */
+	void jidAuthenticated(Jid userJid, String authenticatedIdentity, String sessionId);
 }

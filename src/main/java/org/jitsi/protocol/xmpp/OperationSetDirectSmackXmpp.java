@@ -17,19 +17,17 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
+import net.java.sip.communicator.service.protocol.OperationSet;
 
 /**
  * The operation set that allows to deal with {@link XmppConnection} directly.
  *
  * @author Pawel Domas
  */
-public interface OperationSetDirectSmackXmpp
-    extends OperationSet
-{
-    /**
-     * Returns <tt>XmppConnection</tt> object for the XMPP connection of the
-     * <tt>ProtocolProviderService</tt>.
-     */
-    XmppConnection getXmppConnection();
+public interface OperationSetDirectSmackXmpp extends OperationSet {
+	/**
+	 * Returns <tt>XmppConnection</tt> object for the XMPP connection of the
+	 * <tt>ProtocolProviderService</tt>.
+	 */
+	XmppConnection getXmppConnection();
 }

@@ -17,166 +17,152 @@
  */
 package org.jitsi.jicofo;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.caps.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
-import org.jitsi.eventadmin.*;
-import org.jitsi.jicofo.util.*;
-import org.jitsi.service.configuration.*;
-import org.jitsi.osgi.*;
+import org.jitsi.eventadmin.EventAdmin;
+import org.jitsi.jicofo.util.DaemonThreadFactory;
+import org.jitsi.jicofo.util.JingleOfferFactory;
+import org.jitsi.osgi.OSGIServiceRef;
+import org.jitsi.service.configuration.ConfigurationService;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
-import org.osgi.framework.*;
-
-import java.util.concurrent.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.caps.EntityCapsManager;
 
 /**
  * Activator of the Jitsi Meet Focus bundle.
  *
  * @author Pawel Domas
  */
-public class FocusBundleActivator
-    implements BundleActivator
-{
-    /**
-     * The number of threads available in the thread pool shared through OSGi.
-     */
-    private static final int SHARED_POOL_SIZE = 20;
+public class FocusBundleActivator implements BundleActivator {
+	/**
+	 * The number of threads available in the thread pool shared through OSGi.
+	 */
+	private static final int SHARED_POOL_SIZE = 20;
 
-    /**
-     * OSGi bundle context held by this activator.
-     */
-    public static BundleContext bundleContext;
+	/**
+	 * OSGi bundle context held by this activator.
+	 */
+	public static BundleContext bundleContext;
 
-    /**
-     * {@link ConfigurationService} instance cached by the activator.
-     */
-    private static OSGIServiceRef<ConfigurationService> configServiceRef;
+	/**
+	 * {@link ConfigurationService} instance cached by the activator.
+	 */
+	private static OSGIServiceRef<ConfigurationService> configServiceRef;
 
-    /**
-     * The Jingle offer factory to use in this bundle.
-     */
-    private static JingleOfferFactory jingleOfferFactory;
+	/**
+	 * The Jingle offer factory to use in this bundle.
+	 */
+	private static JingleOfferFactory jingleOfferFactory;
 
-    /**
-     * {@link EventAdmin} service reference.
-     */
-    private static OSGIServiceRef<EventAdmin> eventAdminRef;
+	/**
+	 * {@link EventAdmin} service reference.
+	 */
+	private static OSGIServiceRef<EventAdmin> eventAdminRef;
 
-    /**
-     * Shared thread pool available through OSGi for other components that do
-     * not like to manage their own pool.
-     */
-    private static ScheduledExecutorService sharedThreadPool;
+	/**
+	 * Shared thread pool available through OSGi for other components that do not
+	 * like to manage their own pool.
+	 */
+	private static ScheduledExecutorService sharedThreadPool;
 
-    /**
-     * {@link org.jitsi.jicofo.FocusManager} instance created by this activator.
-     */
-    private FocusManager focusManager;
+	/**
+	 * {@link org.jitsi.jicofo.FocusManager} instance created by this activator.
+	 */
+	private FocusManager focusManager;
 
-    /**
-     * <tt>FocusManager</tt> service registration.
-     */
-    private ServiceRegistration<FocusManager> focusManagerRegistration;
+	/**
+	 * <tt>FocusManager</tt> service registration.
+	 */
+	private ServiceRegistration<FocusManager> focusManagerRegistration;
 
-    /**
-     * Global configuration of Jitsi COnference FOcus
-     */
-    private JitsiMeetGlobalConfig globalConfig;
+	/**
+	 * Global configuration of Jitsi COnference FOcus
+	 */
+	private JitsiMeetGlobalConfig globalConfig;
 
-    @Override
-    public void start(BundleContext context)
-        throws Exception
-    {
-        bundleContext = context;
+	@Override
+	public void start(BundleContext context) throws Exception {
+		bundleContext = context;
 
-        EntityCapsManager.setBundleContext(context);
+		EntityCapsManager.setBundleContext(context);
 
-        // Make threads daemon, so that they won't prevent from doing shutdown
-        sharedThreadPool
-            = Executors.newScheduledThreadPool(
-                    SHARED_POOL_SIZE, new DaemonThreadFactory());
+		// Make threads daemon, so that they won't prevent from doing shutdown
+		sharedThreadPool = Executors.newScheduledThreadPool(SHARED_POOL_SIZE, new DaemonThreadFactory());
 
-        eventAdminRef = new OSGIServiceRef<>(context, EventAdmin.class);
+		eventAdminRef = new OSGIServiceRef<>(context, EventAdmin.class);
 
-        configServiceRef
-            = new OSGIServiceRef<>(context, ConfigurationService.class);
+		configServiceRef = new OSGIServiceRef<>(context, ConfigurationService.class);
 
-        jingleOfferFactory = new JingleOfferFactory(configServiceRef.get());
+		jingleOfferFactory = new JingleOfferFactory(configServiceRef.get());
 
-        context.registerService(
-            ExecutorService.class, sharedThreadPool, null);
-        context.registerService(
-            ScheduledExecutorService.class, sharedThreadPool, null);
+		context.registerService(ExecutorService.class, sharedThreadPool, null);
+		context.registerService(ScheduledExecutorService.class, sharedThreadPool, null);
 
-        globalConfig = JitsiMeetGlobalConfig.startGlobalConfigService(context);
+		globalConfig = JitsiMeetGlobalConfig.startGlobalConfigService(context);
 
-        focusManager = new FocusManager();
-        focusManager.start();
-        focusManagerRegistration
-            = context.registerService(FocusManager.class, focusManager, null);
-    }
+		focusManager = new FocusManager();
+		focusManager.start();
+		focusManagerRegistration = context.registerService(FocusManager.class, focusManager, null);
+	}
 
-    @Override
-    public void stop(BundleContext context)
-        throws Exception
-    {
-        if (focusManagerRegistration != null)
-        {
-            focusManagerRegistration.unregister();
-            focusManagerRegistration = null;
-        }
-        if (focusManager != null)
-        {
-            focusManager.stop();
-            focusManager = null;
-        }
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		if (focusManagerRegistration != null) {
+			focusManagerRegistration.unregister();
+			focusManagerRegistration = null;
+		}
+		if (focusManager != null) {
+			focusManager.stop();
+			focusManager = null;
+		}
 
-        sharedThreadPool.shutdownNow();
-        sharedThreadPool = null;
+		sharedThreadPool.shutdownNow();
+		sharedThreadPool = null;
 
-        configServiceRef = null;
-        eventAdminRef = null;
+		configServiceRef = null;
+		eventAdminRef = null;
 
-        EntityCapsManager.setBundleContext(null);
+		EntityCapsManager.setBundleContext(null);
 
-        if (globalConfig != null)
-        {
-            globalConfig.stopGlobalConfigService();
-            globalConfig = null;
-        }
-    }
+		if (globalConfig != null) {
+			globalConfig.stopGlobalConfigService();
+			globalConfig = null;
+		}
+	}
 
-    /**
-     * Returns the instance of <tt>ConfigurationService</tt>.
-     */
-    public static ConfigurationService getConfigService()
-    {
-        return configServiceRef.get();
-    }
+	/**
+	 * Returns the instance of <tt>ConfigurationService</tt>.
+	 */
+	public static ConfigurationService getConfigService() {
+		return configServiceRef.get();
+	}
 
-    /**
-     * Gets the Jingle offer factory to use in this bundle.
-     *
-     * @return the Jingle offer factory to use in this bundle
-     */
-    public static JingleOfferFactory getJingleOfferFactory()
-    {
-        return jingleOfferFactory;
-    }
+	/**
+	 * Gets the Jingle offer factory to use in this bundle.
+	 *
+	 * @return the Jingle offer factory to use in this bundle
+	 */
+	public static JingleOfferFactory getJingleOfferFactory() {
+		return jingleOfferFactory;
+	}
 
-    /**
-     * Returns the <tt>EventAdmin</tt> instance, if any.
-     * @return the <tt>EventAdmin</tt> instance, if any.
-     */
-    public static EventAdmin getEventAdmin()
-    {
-        return eventAdminRef.get();
-    }
+	/**
+	 * Returns the <tt>EventAdmin</tt> instance, if any.
+	 * 
+	 * @return the <tt>EventAdmin</tt> instance, if any.
+	 */
+	public static EventAdmin getEventAdmin() {
+		return eventAdminRef.get();
+	}
 
-    /**
-     * Returns shared thread pool service.
-     */
-    public static ScheduledExecutorService getSharedThreadPool()
-    {
-        return sharedThreadPool;
-    }
+	/**
+	 * Returns shared thread pool service.
+	 */
+	public static ScheduledExecutorService getSharedThreadPool() {
+		return sharedThreadPool;
+	}
 }

@@ -17,69 +17,61 @@
  */
 package mock;
 
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.util.*;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
+
+import net.java.sip.communicator.service.protocol.ProtocolProviderService;
+import net.java.sip.communicator.util.ServiceUtils;
 
 /**
  *
  */
-public class ProviderListener
-    implements ServiceListener
-{
-    private final BundleContext context;
+public class ProviderListener implements ServiceListener {
+	private final BundleContext context;
 
-    private ProtocolProviderService pps;
+	private ProtocolProviderService pps;
 
-    public ProviderListener(BundleContext context)
-    {
-        this.context = context;
+	public ProviderListener(BundleContext context) {
+		this.context = context;
 
-        pps = ServiceUtils.getService(context, ProtocolProviderService.class);
+		pps = ServiceUtils.getService(context, ProtocolProviderService.class);
 
-        if (pps == null)
-        {
-            context.addServiceListener(this);
-        }
-    }
+		if (pps == null) {
+			context.addServiceListener(this);
+		}
+	}
 
-    @Override
-    public void serviceChanged(ServiceEvent event)
-    {
-        if (event.getType() != ServiceEvent.REGISTERED)
-            return;
+	@Override
+	public void serviceChanged(ServiceEvent event) {
+		if (event.getType() != ServiceEvent.REGISTERED)
+			return;
 
-        Object service = context.getService(event.getServiceReference());
-        if (service instanceof ProtocolProviderService)
-        {
-            context.removeServiceListener(this);
+		Object service = context.getService(event.getServiceReference());
+		if (service instanceof ProtocolProviderService) {
+			context.removeServiceListener(this);
 
-            synchronized (this)
-            {
-                pps = (ProtocolProviderService) service;
+			synchronized (this) {
+				pps = (ProtocolProviderService) service;
 
-                this.notifyAll();
-            }
-        }
-    }
+				this.notifyAll();
+			}
+		}
+	}
 
-    public synchronized ProtocolProviderService obtainProvider(long timeout)
-    {
-        if (pps != null)
-            return pps;
+	public synchronized ProtocolProviderService obtainProvider(long timeout) {
+		if (pps != null)
+			return pps;
 
-        try
-        {
-            this.wait(timeout);
-        }
-        catch (InterruptedException e)
-        {
-            Thread.currentThread().interrupt();
-        }
+		try {
+			this.wait(timeout);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 
-        if (pps == null)
-            throw new RuntimeException("Failed to get protocol provider");
+		if (pps == null)
+			throw new RuntimeException("Failed to get protocol provider");
 
-        return pps;
-    }
+		return pps;
+	}
 }

@@ -17,66 +17,70 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
+import org.jivesoftware.smack.packet.Presence;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
 
-import org.jivesoftware.smack.packet.*;
-import org.jxmpp.jid.*;
+import net.java.sip.communicator.service.protocol.ChatRoomMember;
 
 /**
  * XMPP extended interface of {@link ChatRoomMember}.
  *
  * @author Pawel Domas
  */
-public interface XmppChatMember
-    extends ChatRoomMember
-{
-    /**
-     * Returns the JID of the user (outside the MUC), i.e. the "real" JID.
-     */
-    Jid getJid();
+public interface XmppChatMember extends ChatRoomMember {
+	/**
+	 * Returns the JID of the user (outside the MUC), i.e. the "real" JID.
+	 */
+	Jid getJid();
 
-    /**
-     * Returns the user's MUC address.
-     */
-    EntityFullJid getOccupantJid();
+	/**
+	 * Returns the user's MUC address.
+	 */
+	EntityFullJid getOccupantJid();
 
-    /**
-     * Returns number based on the order of joining of the members in the room.
-     * @return number based on the order of joining of the members in the room.
-     */
-    int getJoinOrderNumber();
+	/**
+	 * Returns number based on the order of joining of the members in the room.
+	 * 
+	 * @return number based on the order of joining of the members in the room.
+	 */
+	int getJoinOrderNumber();
 
-    /**
-     * Obtains the last MUC <tt>Presence</tt> seen for this chat member.
-     * @return the last {@link Presence} packet received for this
-     *         <tt>XmppChatMember</tt> or <tt>null</tt> if we haven't received
-     *         it yet.
-     */
-    Presence getPresence();
+	/**
+	 * Obtains the last MUC <tt>Presence</tt> seen for this chat member.
+	 * 
+	 * @return the last {@link Presence} packet received for this
+	 *         <tt>XmppChatMember</tt> or <tt>null</tt> if we haven't received it
+	 *         yet.
+	 */
+	Presence getPresence();
 
-    /**
-     * Check for video muted status.
-     * @return <tt>true</tt> if the user has video muted, <tt>false</tt> when
-     *         video is not muted or <tt>null</tt> if the status is unknown.
-     */
-    Boolean hasVideoMuted();
+	/**
+	 * Check for video muted status.
+	 * 
+	 * @return <tt>true</tt> if the user has video muted, <tt>false</tt> when video
+	 *         is not muted or <tt>null</tt> if the status is unknown.
+	 */
+	Boolean hasVideoMuted();
 
-    /**
-     * Tells if this <tt>XmppChatMember</tt> is a robot(SIP gateway,
-     * recorder component etc.).
-     * @return <tt>true</tt> if this MUC member is a robot or <tt>false</tt>
-     * otherwise.
-     */
-    boolean isRobot();
+	/**
+	 * Tells if this <tt>XmppChatMember</tt> is a robot(SIP gateway, recorder
+	 * component etc.).
+	 * 
+	 * @return <tt>true</tt> if this MUC member is a robot or <tt>false</tt>
+	 *         otherwise.
+	 */
+	boolean isRobot();
 
-    /**
-     * Gets the region (e.g. "us-east") of this {@link XmppChatMember}.
-     */
-    String getRegion();
+	/**
+	 * Gets the region (e.g. "us-east") of this {@link XmppChatMember}.
+	 */
+	String getRegion();
 
-    /**
-     * Gets the statistics id if any.
-     * @return the statistics ID for this member.
-     */
-    String getStatsId();
+	/**
+	 * Gets the statistics id if any.
+	 * 
+	 * @return the statistics ID for this member.
+	 */
+	String getStatsId();
 }

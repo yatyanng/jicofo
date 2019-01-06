@@ -17,79 +17,76 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.AbstractPacketExtension;
 
 /**
  * Packet extension used to indicate whether the peer should start muted or not.
  *
  * @author Hristo Terezov
  */
-public class StartMutedPacketExtension
-    extends AbstractPacketExtension
-{
+public class StartMutedPacketExtension extends AbstractPacketExtension {
 
-    /**
-     * Name space of start muted packet extension.
-     */
-    public static final String NAMESPACE = "http://jitsi.org/jitmeet/start-muted";
+	/**
+	 * Name space of start muted packet extension.
+	 */
+	public static final String NAMESPACE = "http://jitsi.org/jitmeet/start-muted";
 
-    /**
-     * XML element name of this packet extension.
-     */
-    public static final String ELEMENT_NAME = "startmuted";
+	/**
+	 * XML element name of this packet extension.
+	 */
+	public static final String ELEMENT_NAME = "startmuted";
 
-    /**
-     * Attribute name for audio muted.
-     */
-    public static final String AUDIO_ATTRIBUTE_NAME = "audio";
+	/**
+	 * Attribute name for audio muted.
+	 */
+	public static final String AUDIO_ATTRIBUTE_NAME = "audio";
 
-    /**
-     * Attribute name for video muted.
-     */
-    public static final String VIDEO_ATTRIBUTE_NAME = "video";
+	/**
+	 * Attribute name for video muted.
+	 */
+	public static final String VIDEO_ATTRIBUTE_NAME = "video";
 
-    /**
-     * Constructs new instance of <tt>StartMutedPacketExtension</tt>
-     */
-    public StartMutedPacketExtension()
-    {
-        super(NAMESPACE, ELEMENT_NAME);
-    }
+	/**
+	 * Constructs new instance of <tt>StartMutedPacketExtension</tt>
+	 */
+	public StartMutedPacketExtension() {
+		super(NAMESPACE, ELEMENT_NAME);
+	}
 
-    /**
-     * Sets audio muted attribute.
-     * @param audioMute the value to be set
-     */
-    public void setAudioMute(boolean audioMute)
-    {
-        setAttribute(AUDIO_ATTRIBUTE_NAME, audioMute);
-    }
+	/**
+	 * Sets audio muted attribute.
+	 * 
+	 * @param audioMute the value to be set
+	 */
+	public void setAudioMute(boolean audioMute) {
+		setAttribute(AUDIO_ATTRIBUTE_NAME, audioMute);
+	}
 
-    /**
-     * Sets video muted attribute.
-     * @param videoMute the value to be set.
-     */
-    public void setVideoMute(boolean videoMute)
-    {
-        setAttribute(VIDEO_ATTRIBUTE_NAME, videoMute);
-    }
+	/**
+	 * Sets video muted attribute.
+	 * 
+	 * @param videoMute the value to be set.
+	 */
+	public void setVideoMute(boolean videoMute) {
+		setAttribute(VIDEO_ATTRIBUTE_NAME, videoMute);
+	}
 
-    /**
-     * Returns the audio muted attribute.
-     * @return the audio muted attribute.
-     */
-    public boolean getAudioMuted()
-    {
-        return (Boolean)getAttribute(AUDIO_ATTRIBUTE_NAME);
-    }
+	/**
+	 * Returns the audio muted attribute.
+	 * 
+	 * @return the audio muted attribute.
+	 */
+	public boolean getAudioMuted() {
+		return (Boolean) getAttribute(AUDIO_ATTRIBUTE_NAME);
+	}
 
-    /**
-     * Returns the video muted attribute.
-     * @return the video muted attribute.
-     */
-    public boolean getVideoMuted()
-    {
-        return (Boolean)getAttribute(VIDEO_ATTRIBUTE_NAME);
-    }
+	/**
+	 * Returns the video muted attribute.
+	 * 
+	 * @return the video muted attribute.
+	 */
+	public boolean getVideoMuted() {
+		return (Boolean) getAttribute(VIDEO_ATTRIBUTE_NAME);
+	}
 
 }

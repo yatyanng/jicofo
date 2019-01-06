@@ -17,38 +17,35 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import org.jitsi.protocol.xmpp.*;
+import org.jitsi.protocol.xmpp.OperationSetDirectSmackXmpp;
+import org.jitsi.protocol.xmpp.XmppConnection;
 
 /**
- * Straightforward implementation of {@link OperationSetDirectSmackXmpp}
- * for {@link org.jitsi.impl.protocol.xmpp.XmppProtocolProvider}.
+ * Straightforward implementation of {@link OperationSetDirectSmackXmpp} for
+ * {@link org.jitsi.impl.protocol.xmpp.XmppProtocolProvider}.
  *
  * @author Pawel Domas
  */
-public class OpSetDirectSmackXmppImpl
-    implements OperationSetDirectSmackXmpp
-{
-    /**
-     * Parent protocol provider service.
-     */
-    private final XmppProtocolProvider xmppProvider;
+public class OpSetDirectSmackXmppImpl implements OperationSetDirectSmackXmpp {
+	/**
+	 * Parent protocol provider service.
+	 */
+	private final XmppProtocolProvider xmppProvider;
 
-    /**
-     * Creates new instance of <tt>OpSetDirectSmackXmppImpl</tt>.
-     *
-     * @param xmppProvider parent {@link XmppProtocolProvider}.
-     */
-    public OpSetDirectSmackXmppImpl(XmppProtocolProvider xmppProvider)
-    {
-        this.xmppProvider = xmppProvider;
-    }
+	/**
+	 * Creates new instance of <tt>OpSetDirectSmackXmppImpl</tt>.
+	 *
+	 * @param xmppProvider parent {@link XmppProtocolProvider}.
+	 */
+	public OpSetDirectSmackXmppImpl(XmppProtocolProvider xmppProvider) {
+		this.xmppProvider = xmppProvider;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public XmppConnection getXmppConnection()
-    {
-        return xmppProvider.getConnectionAdapter();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public XmppConnection getXmppConnection() {
+		return xmppProvider.getConnectionAdapter();
+	}
 }

@@ -17,17 +17,18 @@
  */
 package org.jitsi.jicofo.xmpp;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.jitsi.xmpp.util.*;
+import org.jitsi.xmpp.util.IQUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import org.jivesoftware.smack.packet.*;
-
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-
-import static org.junit.Assert.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.JibriIq;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.JibriIqProvider;
 
 /**
  * Few basic tests for parsing JibriIQ
@@ -35,33 +36,26 @@ import static org.junit.Assert.*;
  * @author Pawel Domas
  */
 @RunWith(JUnit4.class)
-public class JibriIqProviderTest
-{
-    @Test
-    public void testParseIQ()
-        throws Exception
-    {
-        JibriIqProvider provider = new JibriIqProvider();
+public class JibriIqProviderTest {
+	@Test
+	public void testParseIQ() throws Exception {
+		JibriIqProvider provider = new JibriIqProvider();
 
-        // JibriIq
-        String iqXml =
-            "<iq to='t' from='f' type='set'>" +
-                "<jibri xmlns='http://jitsi.org/protocol/jibri'" +
-                "   status='off' action='stop' failure_reason='error'" +
-                "   session_id='abcd'" +
-                "/>" +
+		// JibriIq
+		String iqXml = "<iq to='t' from='f' type='set'>" + "<jibri xmlns='http://jitsi.org/protocol/jibri'"
+				+ "   status='off' action='stop' failure_reason='error'" + "   session_id='abcd'" + "/>" +
 
-                "</iq>";
+				"</iq>";
 
-        JibriIq jibriIq = IQUtils.parse(iqXml, provider);
+		JibriIq jibriIq = IQUtils.parse(iqXml, provider);
 
-        assertNotNull(jibriIq);
+		assertNotNull(jibriIq);
 
-        assertEquals(JibriIq.Status.OFF, jibriIq.getStatus());
-        assertEquals(JibriIq.Action.STOP, jibriIq.getAction());
-        assertEquals(JibriIq.FailureReason.ERROR, jibriIq.getFailureReason());
-        assertTrue(jibriIq.getSessionId().equalsIgnoreCase("abcd"));
+		assertEquals(JibriIq.Status.OFF, jibriIq.getStatus());
+		assertEquals(JibriIq.Action.STOP, jibriIq.getAction());
+		assertEquals(JibriIq.FailureReason.ERROR, jibriIq.getFailureReason());
+		assertTrue(jibriIq.getSessionId().equalsIgnoreCase("abcd"));
 
-        assertNull(jibriIq.getError());
-    }
+		assertNull(jibriIq.getError());
+	}
 }

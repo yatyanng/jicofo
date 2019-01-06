@@ -17,63 +17,51 @@
  */
 package mock;
 
-import net.java.sip.communicator.service.protocol.*;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.packet.ExtensionElement;
+
+import net.java.sip.communicator.service.protocol.ChatRoom;
+import net.java.sip.communicator.service.protocol.OperationSetJitsiMeetTools;
 
 /**
  * @author Pawel Domas
  */
-public class MockJitsiMeetTools
-    implements OperationSetJitsiMeetTools
-{
-    private final MockProtocolProvider parentProvider;
+public class MockJitsiMeetTools implements OperationSetJitsiMeetTools {
+	private final MockProtocolProvider parentProvider;
 
-    public MockJitsiMeetTools(MockProtocolProvider pps)
-    {
-        this.parentProvider = pps;
-    }
+	public MockJitsiMeetTools(MockProtocolProvider pps) {
+		this.parentProvider = pps;
+	}
 
-    @Override
-    public void addSupportedFeature(String s)
-    {
-        //FIXME: not used in tests yet
-    }
+	@Override
+	public void addSupportedFeature(String s) {
+		// FIXME: not used in tests yet
+	}
 
-    @Override
-    public void removeSupportedFeature(String s)
-    {
-        //FIXME: not used in tests yet
-    }
+	@Override
+	public void removeSupportedFeature(String s) {
+		// FIXME: not used in tests yet
+	}
 
-    @Override
-    public void sendPresenceExtension(ChatRoom chatRoom,
-                                      ExtensionElement extension)
-    {
-        //FIXME: to be tested
-    }
+	@Override
+	public void sendPresenceExtension(ChatRoom chatRoom, ExtensionElement extension) {
+		// FIXME: to be tested
+	}
 
-    @Override
-    public void removePresenceExtension(
-        ChatRoom chatRoom, ExtensionElement packetExtension)
-    {
-        //FIXME: to be tested
-    }
+	@Override
+	public void removePresenceExtension(ChatRoom chatRoom, ExtensionElement packetExtension) {
+		// FIXME: to be tested
+	}
 
-    @Override
-    public void setPresenceStatus(ChatRoom chatRoom, String statusName)
-    {
-        //FIXME: to be tested
-    }
+	@Override
+	public void setPresenceStatus(ChatRoom chatRoom, String statusName) {
+		// FIXME: to be tested
+	}
 
-    @Override
-    public void addRequestListener(
-            JitsiMeetRequestListener jitsiMeetRequestListener)
-    {
-    }
+	@Override
+	public void addRequestListener(JitsiMeetRequestListener jitsiMeetRequestListener) {
+	}
 
-    @Override
-    public void removeRequestListener(
-            JitsiMeetRequestListener jitsiMeetRequestListener)
-    {
-    }
+	@Override
+	public void removeRequestListener(JitsiMeetRequestListener jitsiMeetRequestListener) {
+	}
 }

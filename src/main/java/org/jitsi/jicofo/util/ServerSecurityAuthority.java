@@ -17,40 +17,32 @@
  */
 package org.jitsi.jicofo.util;
 
-import net.java.sip.communicator.service.protocol.*;
+import net.java.sip.communicator.service.protocol.SecurityAuthority;
+import net.java.sip.communicator.service.protocol.UserCredentials;
 
 /**
  * No UI just returns default credentials.
  *
  * @author Pawel Domas
  */
-public class ServerSecurityAuthority
-    implements SecurityAuthority
-{
-    @Override
-    public UserCredentials obtainCredentials(String realm,
-                                             UserCredentials defaultValues,
-                                             int reasonCode)
-    {
-        return defaultValues;
-    }
+public class ServerSecurityAuthority implements SecurityAuthority {
+	@Override
+	public UserCredentials obtainCredentials(String realm, UserCredentials defaultValues, int reasonCode) {
+		return defaultValues;
+	}
 
-    @Override
-    public UserCredentials obtainCredentials(String realm,
-                                             UserCredentials defaultValues)
-    {
-        return defaultValues;
-    }
+	@Override
+	public UserCredentials obtainCredentials(String realm, UserCredentials defaultValues) {
+		return defaultValues;
+	}
 
-    @Override
-    public void setUserNameEditable(boolean isUserNameEditable)
-    {
+	@Override
+	public void setUserNameEditable(boolean isUserNameEditable) {
 
-    }
+	}
 
-    @Override
-    public boolean isUserNameEditable()
-    {
-        return false;
-    }
+	@Override
+	public boolean isUserNameEditable() {
+		return false;
+	}
 }

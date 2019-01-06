@@ -17,55 +17,47 @@
  */
 package org.jitsi.jicofo.util;
 
-import org.jitsi.eventadmin.*;
-import org.jitsi.jicofo.event.*;
-import org.jitsi.osgi.*;
-import org.osgi.framework.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import java.util.*;
-import java.util.concurrent.*;
+import org.jitsi.eventadmin.Event;
+import org.jitsi.jicofo.event.EventFactory;
+import org.jitsi.osgi.EventHandlerActivator;
+import org.osgi.framework.BundleContext;
 
 /**
- * Class listens for {@link EventFactory#CONFERENCE_ROOM_TOPIC} and exposes
- * the functionality of waiting for 'n' conference created events.
+ * Class listens for {@link EventFactory#CONFERENCE_ROOM_TOPIC} and exposes the
+ * functionality of waiting for 'n' conference created events.
  *
  * @author Pawel Domas
  */
-public class ConferenceRoomListener
-    extends EventHandlerActivator
-{
-    private List<Event> rooms = new LinkedList<>();
+public class ConferenceRoomListener extends EventHandlerActivator {
+	private List<Event> rooms = new LinkedList<>();
 
-    private CountDownLatch roomCounter;
+	private CountDownLatch roomCounter;
 
-    public ConferenceRoomListener()
-    {
-        super(new String[]{ EventFactory.CONFERENCE_ROOM_TOPIC });
-    }
+	public ConferenceRoomListener() {
+		super(new String[] { EventFactory.CONFERENCE_ROOM_TOPIC });
+	}
 
-    public void await(BundleContext bc,
-                      int roomCount, long timeout, TimeUnit timeUnit)
-        throws Exception
-    {
-        roomCounter = new CountDownLatch(roomCount);
+	public void await(BundleContext bc, int roomCount, long timeout, TimeUnit timeUnit) throws Exception {
+		roomCounter = new CountDownLatch(roomCount);
 
-        start(bc);
+		start(bc);
 
-        try
-        {
-            roomCounter.await(timeout, timeUnit);
-        }
-        finally
-        {
-            stop(bc);
-        }
-    }
+		try {
+			roomCounter.await(timeout, timeUnit);
+		} finally {
+			stop(bc);
+		}
+	}
 
-    @Override
-    public void handleEvent(Event event)
-    {
-        rooms.add(event);
+	@Override
+	public void handleEvent(Event event) {
+		rooms.add(event);
 
-        roomCounter.countDown();
-    }
+		roomCounter.countDown();
+	}
 }

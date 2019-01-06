@@ -17,9 +17,9 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import org.jxmpp.jid.*;
+import java.util.Objects;
 
-import java.util.*;
+import org.jxmpp.jid.Jid;
 
 /**
  * Class describes Jingle session.
@@ -27,109 +27,97 @@ import java.util.*;
  * @author Pawel Domas
  * @author Lyubomir Marinov
  */
-public class JingleSession
-{
-    /**
-     * Jingle session identifier.
-     */
-    private final String sid;
+public class JingleSession {
+	/**
+	 * Jingle session identifier.
+	 */
+	private final String sid;
 
-    /**
-     * Remote peer XMPP address.
-     */
-    private final Jid address;
+	/**
+	 * Remote peer XMPP address.
+	 */
+	private final Jid address;
 
-    /**
-     * <tt>JingleRequestHandler</tt> that is processing requests for this
-     * session.
-     */
-    private final JingleRequestHandler requestHandler;
+	/**
+	 * <tt>JingleRequestHandler</tt> that is processing requests for this session.
+	 */
+	private final JingleRequestHandler requestHandler;
 
-    /**
-     * The indicator which determines whether a {@code session-accept} was
-     * received from the remote peer in response to our {@code session-initiate}
-     * which initialized this instance. Introduced to work around a case in
-     * which we do not receive an acknowledgment from the remote peer in
-     * response to our {@code session-initiate} but do receive a
-     * {@code session-accept}.
-     */
-    private boolean _accepted = false;
+	/**
+	 * The indicator which determines whether a {@code session-accept} was received
+	 * from the remote peer in response to our {@code session-initiate} which
+	 * initialized this instance. Introduced to work around a case in which we do
+	 * not receive an acknowledgment from the remote peer in response to our
+	 * {@code session-initiate} but do receive a {@code session-accept}.
+	 */
+	private boolean _accepted = false;
 
-    /**
-     * Creates new instance of <tt>JingleSession</tt> for given parameters.
-     *
-     * @param sid Jingle session identifier of new instance.
-     * @param address remote peer XMPP address.
-     * @param requestHandler request handler that will be associated with
-     *                       newly created instance.
-     */
-    public JingleSession(String sid, Jid address,
-                         JingleRequestHandler requestHandler)
-    {
+	/**
+	 * Creates new instance of <tt>JingleSession</tt> for given parameters.
+	 *
+	 * @param sid            Jingle session identifier of new instance.
+	 * @param address        remote peer XMPP address.
+	 * @param requestHandler request handler that will be associated with newly
+	 *                       created instance.
+	 */
+	public JingleSession(String sid, Jid address, JingleRequestHandler requestHandler) {
 
-        this.sid = sid;
-        this.address = address;
-        this.requestHandler
-            = Objects.requireNonNull(requestHandler, "requestHandler");
-    }
+		this.sid = sid;
+		this.address = address;
+		this.requestHandler = Objects.requireNonNull(requestHandler, "requestHandler");
+	}
 
-    /**
-     * Returns Jingle session identifier.
-     *
-     * @return Jingle session identifier
-     */
-    public String getSessionID()
-    {
-        return sid;
-    }
+	/**
+	 * Returns Jingle session identifier.
+	 *
+	 * @return Jingle session identifier
+	 */
+	public String getSessionID() {
+		return sid;
+	}
 
-    /**
-     * Returns remote peer's full XMPP address.
-     *
-     * @return remote peer's full XMPP address
-     */
-    public Jid getAddress()
-    {
-        return address;
-    }
+	/**
+	 * Returns remote peer's full XMPP address.
+	 *
+	 * @return remote peer's full XMPP address
+	 */
+	public Jid getAddress() {
+		return address;
+	}
 
-    /**
-     * Returns <tt>JingleRequestHandler</tt> that is responsible for handling
-     * request for this Jingle session.
-     *
-     * @return <tt>JingleRequestHandler</tt> that is responsible for handling
-     * request for this Jingle session
-     */
-    public JingleRequestHandler getRequestHandler()
-    {
-        return requestHandler;
-    }
+	/**
+	 * Returns <tt>JingleRequestHandler</tt> that is responsible for handling
+	 * request for this Jingle session.
+	 *
+	 * @return <tt>JingleRequestHandler</tt> that is responsible for handling
+	 *         request for this Jingle session
+	 */
+	public JingleRequestHandler getRequestHandler() {
+		return requestHandler;
+	}
 
-    /**
-     * Determines whether a {@code session-accept} was received from the remote
-     * peer in response to our {@code session-initiate} which initialized this
-     * instance.
-     *
-     * @return {@code true} if a {@code session-accept} was received from the
-     * remote peer in response to our {@code session-initiate} which initialized
-     * this instance; otherwise, {@code false}
-     */
-    public boolean isAccepted()
-    {
-        return _accepted;
-    }
+	/**
+	 * Determines whether a {@code session-accept} was received from the remote peer
+	 * in response to our {@code session-initiate} which initialized this instance.
+	 *
+	 * @return {@code true} if a {@code session-accept} was received from the remote
+	 *         peer in response to our {@code session-initiate} which initialized
+	 *         this instance; otherwise, {@code false}
+	 */
+	public boolean isAccepted() {
+		return _accepted;
+	}
 
-    /**
-     * Sets the indicator which determines whether a {@code session-accept} was
-     * received from the remote peer in response to our {@code session-initiate}
-     * which initialized this instance.
-     *
-     * @param accepted {@code true} if a {@code session-accept} was received
-     * from the remote peer in response to our {@code session-initiate} which
-     * initialized this instance; otherwise, {@code false}
-     */
-    public void setAccepted(boolean accepted)
-    {
-        _accepted = accepted;
-    }
+	/**
+	 * Sets the indicator which determines whether a {@code session-accept} was
+	 * received from the remote peer in response to our {@code session-initiate}
+	 * which initialized this instance.
+	 *
+	 * @param accepted {@code true} if a {@code session-accept} was received from
+	 *                 the remote peer in response to our {@code session-initiate}
+	 *                 which initialized this instance; otherwise, {@code false}
+	 */
+	public void setAccepted(boolean accepted) {
+		_accepted = accepted;
+	}
 }

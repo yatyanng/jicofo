@@ -17,9 +17,9 @@
  */
 package org.jitsi.jicofo;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
+import org.jxmpp.jid.Jid;
 
-import org.jxmpp.jid.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.ColibriConferenceIQ;
 
 /**
  * Class adds utility methods that require use of package protected methods of
@@ -28,42 +28,36 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public class ConferenceUtility
-{
-    /**
-     * Conference instance.
-     */
-    private final JitsiMeetConference conference;
+public class ConferenceUtility {
+	/**
+	 * Conference instance.
+	 */
+	private final JitsiMeetConference conference;
 
-    /**
-     * Creates new instance for given <tt>JitsiMeetConference</tt>.
-     * @param conference the conference that wil be used by this instance.
-     */
-    public ConferenceUtility(JitsiMeetConference conference)
-    {
-        this.conference = conference;
-    }
+	/**
+	 * Creates new instance for given <tt>JitsiMeetConference</tt>.
+	 * 
+	 * @param conference the conference that wil be used by this instance.
+	 */
+	public ConferenceUtility(JitsiMeetConference conference) {
+		this.conference = conference;
+	}
 
-    /**
-     * Returns the id of video channel allocated for the participant with given
-     * JID.
-     * @param participantJid the MUC JID of the participant for whom we want to
-     *                       get video channel id.
-     */
-    public String getParticipantVideoChannelId(Jid participantJid)
-    {
-        Participant participant
-            = conference.findParticipantForRoomJid(participantJid);
+	/**
+	 * Returns the id of video channel allocated for the participant with given JID.
+	 * 
+	 * @param participantJid the MUC JID of the participant for whom we want to get
+	 *                       video channel id.
+	 */
+	public String getParticipantVideoChannelId(Jid participantJid) {
+		Participant participant = conference.findParticipantForRoomJid(participantJid);
 
-        ColibriConferenceIQ channelsInfo
-            = participant.getColibriChannelsInfo();
+		ColibriConferenceIQ channelsInfo = participant.getColibriChannelsInfo();
 
-        ColibriConferenceIQ.Content videoContent
-            = channelsInfo.getContent("video");
+		ColibriConferenceIQ.Content videoContent = channelsInfo.getContent("video");
 
-        ColibriConferenceIQ.Channel videoChannel
-            = videoContent.getChannel(0);
+		ColibriConferenceIQ.Channel videoChannel = videoContent.getChannel(0);
 
-        return videoChannel.getID();
-    }
+		return videoChannel.getID();
+	}
 }

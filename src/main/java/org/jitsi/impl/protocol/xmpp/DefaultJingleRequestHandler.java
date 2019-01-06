@@ -17,12 +17,16 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import net.java.sip.communicator.util.*;
-import org.jitsi.protocol.xmpp.*;
-import org.jivesoftware.smack.packet.*;
+import java.util.List;
 
-import java.util.*;
+import org.jitsi.protocol.xmpp.JingleRequestHandler;
+import org.jitsi.protocol.xmpp.JingleSession;
+import org.jivesoftware.smack.packet.XMPPError;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.ContentPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQ;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.ReasonPacketExtension;
+import net.java.sip.communicator.util.Logger;
 
 /**
  * Stub for {@link JingleRequestHandler}, so that we don't have to implement all
@@ -30,69 +34,54 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class DefaultJingleRequestHandler
-    implements JingleRequestHandler
-{
-    /**
-     * The logger used by this instance.
-     */
-    private final static Logger logger
-        = Logger.getLogger(DefaultJingleRequestHandler.class);
+public class DefaultJingleRequestHandler implements JingleRequestHandler {
+	/**
+	 * The logger used by this instance.
+	 */
+	private final static Logger logger = Logger.getLogger(DefaultJingleRequestHandler.class);
 
-    @Override
-    public XMPPError onAddSource(JingleSession jingleSession,
-                                 List<ContentPacketExtension> contents)
-    {
-        logger.warn("Ignored Jingle 'source-add'");
+	@Override
+	public XMPPError onAddSource(JingleSession jingleSession, List<ContentPacketExtension> contents) {
+		logger.warn("Ignored Jingle 'source-add'");
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public XMPPError onRemoveSource(JingleSession jingleSession,
-                               List<ContentPacketExtension> contents)
-    {
-        logger.warn("Ignored Jingle 'source-remove'");
+	@Override
+	public XMPPError onRemoveSource(JingleSession jingleSession, List<ContentPacketExtension> contents) {
+		logger.warn("Ignored Jingle 'source-remove'");
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public XMPPError onSessionAccept(JingleSession jingleSession,
-                                List<ContentPacketExtension> answer)
-    {
-        logger.warn("Ignored Jingle 'session-accept'");
+	@Override
+	public XMPPError onSessionAccept(JingleSession jingleSession, List<ContentPacketExtension> answer) {
+		logger.warn("Ignored Jingle 'session-accept'");
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public XMPPError onTransportAccept(JingleSession jingleSession,
-                                  List<ContentPacketExtension> contents)
-    {
-        logger.warn("Ignored Jingle 'transport-accept'");
+	@Override
+	public XMPPError onTransportAccept(JingleSession jingleSession, List<ContentPacketExtension> contents) {
+		logger.warn("Ignored Jingle 'transport-accept'");
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public void onTransportInfo(JingleSession jingleSession,
-                                List<ContentPacketExtension> contents)
-    {
-        logger.warn("Ignored Jingle 'transport-info'");
-    }
+	@Override
+	public void onTransportInfo(JingleSession jingleSession, List<ContentPacketExtension> contents) {
+		logger.warn("Ignored Jingle 'transport-info'");
+	}
 
-    @Override
-    public void onTransportReject(JingleSession jingleSession,
-                                  JingleIQ      rejectIQ)
-    {
-        logger.warn("Ignored Jingle 'transport-reject'");
-    }
+	@Override
+	public void onTransportReject(JingleSession jingleSession, JingleIQ rejectIQ) {
+		logger.warn("Ignored Jingle 'transport-reject'");
+	}
 
 	@Override
 	public XMPPError onSessionTerminate(JingleSession jingleSession, ReasonPacketExtension reason) {
 		logger.warn("Ignored Jingle 'session-terminate'");
 
-        return null;
+		return null;
 	}
 }

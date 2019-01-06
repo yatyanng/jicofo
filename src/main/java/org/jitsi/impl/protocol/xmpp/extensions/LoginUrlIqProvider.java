@@ -17,12 +17,12 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-
-import org.jitsi.util.*;
-import org.jivesoftware.smack.provider.*;
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-import org.xmlpull.v1.*;
+import org.jitsi.util.StringUtils;
+import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.xmlpull.v1.XmlPullParser;
 
 /**
  * Provider handles parsing of {@link ConferenceIq} and {@link LoginUrlIq}
@@ -30,73 +30,55 @@ import org.xmlpull.v1.*;
  *
  * @author Pawel Domas
  */
-public class LoginUrlIqProvider
-    extends IQProvider<LoginUrlIq>
-{
-    /**
-     * Creates new instance of <tt>ConferenceIqProvider</tt>.
-     */
-    public LoginUrlIqProvider()
-    {
-        // <auth-url>
-        ProviderManager.addIQProvider(
-            LoginUrlIq.ELEMENT_NAME, LoginUrlIq.NAMESPACE, this);
-    }
+public class LoginUrlIqProvider extends IQProvider<LoginUrlIq> {
+	/**
+	 * Creates new instance of <tt>ConferenceIqProvider</tt>.
+	 */
+	public LoginUrlIqProvider() {
+		// <auth-url>
+		ProviderManager.addIQProvider(LoginUrlIq.ELEMENT_NAME, LoginUrlIq.NAMESPACE, this);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LoginUrlIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
-        String namespace = parser.getNamespace();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public LoginUrlIq parse(XmlPullParser parser, int initialDepth) throws Exception {
+		String namespace = parser.getNamespace();
 
-        // Check the namespace
-        if (!ConferenceIq.NAMESPACE.equals(namespace))
-        {
-            return null;
-        }
+		// Check the namespace
+		if (!ConferenceIq.NAMESPACE.equals(namespace)) {
+			return null;
+		}
 
-        String rootElement = parser.getName();
+		String rootElement = parser.getName();
 
-        LoginUrlIq authUrlIQ;
-        if (LoginUrlIq.ELEMENT_NAME.equals(rootElement))
-        {
-            authUrlIQ = new LoginUrlIq();
+		LoginUrlIq authUrlIQ;
+		if (LoginUrlIq.ELEMENT_NAME.equals(rootElement)) {
+			authUrlIQ = new LoginUrlIq();
 
-            String url = parser.getAttributeValue(
-                    "", LoginUrlIq.URL_ATTRIBUTE_NAME);
-            if (!StringUtils.isNullOrEmpty(url))
-            {
-                authUrlIQ.setUrl(url);
-            }
-            String room = parser.getAttributeValue(
-                    "", LoginUrlIq.ROOM_NAME_ATTR_NAME);
-            if (!StringUtils.isNullOrEmpty(room))
-            {
-                EntityBareJid roomJid = JidCreate.entityBareFrom(room);
-                authUrlIQ.setRoom(roomJid);
-            }
-            String popup = parser.getAttributeValue(
-                    "", LoginUrlIq.POPUP_ATTR_NAME);
-            if (!StringUtils.isNullOrEmpty(popup))
-            {
-                Boolean popupBool = Boolean.parseBoolean(popup);
-                authUrlIQ.setPopup(popupBool);
-            }
-            String machineUID = parser.getAttributeValue(
-                    "", LoginUrlIq.MACHINE_UID_ATTR_NAME);
-            if (!StringUtils.isNullOrEmpty(machineUID))
-            {
-                authUrlIQ.setMachineUID(machineUID);
-            }
-        }
-        else
-        {
-            return null;
-        }
+			String url = parser.getAttributeValue("", LoginUrlIq.URL_ATTRIBUTE_NAME);
+			if (!StringUtils.isNullOrEmpty(url)) {
+				authUrlIQ.setUrl(url);
+			}
+			String room = parser.getAttributeValue("", LoginUrlIq.ROOM_NAME_ATTR_NAME);
+			if (!StringUtils.isNullOrEmpty(room)) {
+				EntityBareJid roomJid = JidCreate.entityBareFrom(room);
+				authUrlIQ.setRoom(roomJid);
+			}
+			String popup = parser.getAttributeValue("", LoginUrlIq.POPUP_ATTR_NAME);
+			if (!StringUtils.isNullOrEmpty(popup)) {
+				Boolean popupBool = Boolean.parseBoolean(popup);
+				authUrlIQ.setPopup(popupBool);
+			}
+			String machineUID = parser.getAttributeValue("", LoginUrlIq.MACHINE_UID_ATTR_NAME);
+			if (!StringUtils.isNullOrEmpty(machineUID)) {
+				authUrlIQ.setMachineUID(machineUID);
+			}
+		} else {
+			return null;
+		}
 
-        return authUrlIQ;
-    }
+		return authUrlIQ;
+	}
 }

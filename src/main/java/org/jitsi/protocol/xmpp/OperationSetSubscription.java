@@ -17,10 +17,11 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
-import org.jivesoftware.smackx.pubsub.*;
+import java.util.List;
 
-import java.util.*;
+import org.jivesoftware.smackx.pubsub.PayloadItem;
+
+import net.java.sip.communicator.service.protocol.OperationSet;
 
 /**
  * Operation set exposes underlying protocol's subscription for notifications.
@@ -29,30 +30,30 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public interface OperationSetSubscription
-    extends OperationSet
-{
-    /**
-     * Subscribes to given <tt>node</tt> for notifications.
-     *
-     * @param node the of the node to which given listener will be subscribed to
-     * @param listener the {@link SubscriptionListener} instance that will be
-     *                 notified of updates from the node.
-     */
-    void subscribe(String node, SubscriptionListener listener);
+public interface OperationSetSubscription extends OperationSet {
+	/**
+	 * Subscribes to given <tt>node</tt> for notifications.
+	 *
+	 * @param node     the of the node to which given listener will be subscribed to
+	 * @param listener the {@link SubscriptionListener} instance that will be
+	 *                 notified of updates from the node.
+	 */
+	void subscribe(String node, SubscriptionListener listener);
 
-    /**
-     * Cancels subscriptions for given <tt>node</tt>.
-     * @param node the node for which subscription will be canceled.
-     * @param listener subscription listener to be registered.
-     */
-    void unSubscribe(String node, SubscriptionListener listener);
+	/**
+	 * Cancels subscriptions for given <tt>node</tt>.
+	 * 
+	 * @param node     the node for which subscription will be canceled.
+	 * @param listener subscription listener to be registered.
+	 */
+	void unSubscribe(String node, SubscriptionListener listener);
 
-    /**
-     * Obtains the list of published items persisted on the server.
-     * @param node the name of PubSub node for which items list will be fetched.
-     * @return the list of items or <tt>null</tt> if an error occurred and we
-     *         were unable to obtain the list.
-     */
-    List<PayloadItem> getItems(String node);
+	/**
+	 * Obtains the list of published items persisted on the server.
+	 * 
+	 * @param node the name of PubSub node for which items list will be fetched.
+	 * @return the list of items or <tt>null</tt> if an error occurred and we were
+	 *         unable to obtain the list.
+	 */
+	List<PayloadItem> getItems(String node);
 }

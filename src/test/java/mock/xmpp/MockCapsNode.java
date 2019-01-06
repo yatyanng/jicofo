@@ -17,67 +17,56 @@
  */
 package mock.xmpp;
 
-import org.jxmpp.jid.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import java.util.*;
-import java.util.concurrent.*;
+import org.jxmpp.jid.Jid;
 
 /**
  *
  */
-public class MockCapsNode
-{
-    private final Jid nodeName;
+public class MockCapsNode {
+	private final Jid nodeName;
 
-    private final String[] features;
+	private final String[] features;
 
-    protected List<MockCapsNode> childNodes
-        = new CopyOnWriteArrayList<>();
+	protected List<MockCapsNode> childNodes = new CopyOnWriteArrayList<>();
 
-    public MockCapsNode(Jid nodeName, String[] features)
-    {
-        this.nodeName = nodeName;
-        this.features = features;
-    }
+	public MockCapsNode(Jid nodeName, String[] features) {
+		this.nodeName = nodeName;
+		this.features = features;
+	}
 
-    public Jid getNodeName()
-    {
-        return nodeName;
-    }
+	public Jid getNodeName() {
+		return nodeName;
+	}
 
-    public String[] getFeatures()
-    {
-        return features;
-    }
+	public String[] getFeatures() {
+		return features;
+	}
 
-    public void addChildNode(MockCapsNode node)
-    {
-        childNodes.add(node);
-    }
+	public void addChildNode(MockCapsNode node) {
+		childNodes.add(node);
+	}
 
-    public Collection<MockCapsNode> getChildNodes()
-    {
-        return Collections.unmodifiableCollection(childNodes);
-    }
+	public Collection<MockCapsNode> getChildNodes() {
+		return Collections.unmodifiableCollection(childNodes);
+	}
 
-    public MockCapsNode findChild(Jid name)
-    {
-        for (MockCapsNode node : childNodes)
-        {
-            if (node.getNodeName().equals(name))
-            {
-                return node;
-            }
-            else
-            {
-                MockCapsNode child = node.findChild(name);
-                if (child != null)
-                {
-                    return child;
-                }
-            }
-        }
+	public MockCapsNode findChild(Jid name) {
+		for (MockCapsNode node : childNodes) {
+			if (node.getNodeName().equals(name)) {
+				return node;
+			} else {
+				MockCapsNode child = node.findChild(name);
+				if (child != null) {
+					return child;
+				}
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

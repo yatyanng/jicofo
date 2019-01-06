@@ -17,50 +17,41 @@
  */
 package org.jitsi.impl.reservation.rest.json;
 
-import org.jitsi.impl.reservation.rest.*;
-import org.json.simple.parser.*;
+import java.io.IOException;
 
-import java.io.*;
+import org.jitsi.impl.reservation.rest.ErrorResponse;
+import org.json.simple.parser.ContentHandler;
+import org.json.simple.parser.ParseException;
 
 /**
  * {@link ContentHandler} implementation for parsing JSON of error responses.
  *
  * @author Pawel Domas
  */
-public class ErrorJsonHandler
-    extends AbstractJsonHandler<ErrorResponse>
-{
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ErrorResponse createNewObject()
-    {
-        return new ErrorResponse();
-    }
+public class ErrorJsonHandler extends AbstractJsonHandler<ErrorResponse> {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected ErrorResponse createNewObject() {
+		return new ErrorResponse();
+	}
 
-    @Override
-    public boolean primitive(Object primitive)
-            throws ParseException, IOException
-    {
-        if ("error".equals(currentKey))
-        {
-            assertString(primitive);
+	@Override
+	public boolean primitive(Object primitive) throws ParseException, IOException {
+		if ("error".equals(currentKey)) {
+			assertString(primitive);
 
-            editedInstance.setError((String)primitive);
-        }
-        else if ("message".equals(currentKey))
-        {
-            assertString(primitive);
+			editedInstance.setError((String) primitive);
+		} else if ("message".equals(currentKey)) {
+			assertString(primitive);
 
-            editedInstance.setMessage((String)primitive);
-        }
-        else if ("conflict_id".equals(currentKey))
-        {
-            assertNumber(primitive);
+			editedInstance.setMessage((String) primitive);
+		} else if ("conflict_id".equals(currentKey)) {
+			assertNumber(primitive);
 
-            editedInstance.setConflictId((Number)primitive);
-        }
-        return true;
-    }
+			editedInstance.setConflictId((Number) primitive);
+		}
+		return true;
+	}
 }

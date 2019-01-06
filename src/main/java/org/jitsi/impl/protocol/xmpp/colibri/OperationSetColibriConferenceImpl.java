@@ -17,15 +17,17 @@
  */
 package org.jitsi.impl.protocol.xmpp.colibri;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
+import org.jitsi.eventadmin.EventAdmin;
+import org.jitsi.protocol.xmpp.XmppConnection;
+import org.jitsi.protocol.xmpp.colibri.ColibriConference;
+import org.jitsi.protocol.xmpp.colibri.OperationSetColibriConference;
+import org.jivesoftware.smack.provider.ProviderManager;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.ColibriConferenceIQ;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.ColibriIQProvider;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQ;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQProvider;
 import net.java.sip.communicator.util.Logger;
-
-import org.jitsi.eventadmin.*;
-import org.jitsi.protocol.xmpp.*;
-import org.jitsi.protocol.xmpp.colibri.*;
-
-import org.jivesoftware.smack.provider.*;
 
 /**
  * Default implementation of {@link OperationSetColibriConference} that uses
@@ -34,51 +36,40 @@ import org.jivesoftware.smack.provider.*;
  *
  * @author Pawel Domas
  */
-public class OperationSetColibriConferenceImpl
-    implements OperationSetColibriConference
-{
-    private final static Logger logger = Logger.getLogger
-            (OperationSetColibriConferenceImpl.class);
+public class OperationSetColibriConferenceImpl implements OperationSetColibriConference {
+	private final static Logger logger = Logger.getLogger(OperationSetColibriConferenceImpl.class);
 
-    private XmppConnection connection;
+	private XmppConnection connection;
 
-    private EventAdmin eventAdmin;
+	private EventAdmin eventAdmin;
 
-    /**
-     * Initializes this operation set.
-     *
-     * @param connection Smack XMPP connection impl that will be used to send
-     *                   and receive XMPP packets.
-     * @param eventAdmin the <tt>EventAdmin</tt> which will be used by
-     *                   the underlying components to emit events.
-     */
-    public void initialize(XmppConnection connection, EventAdmin eventAdmin)
-    {
-        this.connection = connection;
-        this.eventAdmin = eventAdmin;
+	/**
+	 * Initializes this operation set.
+	 *
+	 * @param connection Smack XMPP connection impl that will be used to send and
+	 *                   receive XMPP packets.
+	 * @param eventAdmin the <tt>EventAdmin</tt> which will be used by the
+	 *                   underlying components to emit events.
+	 */
+	public void initialize(XmppConnection connection, EventAdmin eventAdmin) {
+		this.connection = connection;
+		this.eventAdmin = eventAdmin;
 
-        // Register Colibri
-        ProviderManager.addIQProvider(
-            ColibriConferenceIQ.ELEMENT_NAME,
-            ColibriConferenceIQ.NAMESPACE,
-            new ColibriIQProvider());
+		// Register Colibri
+		ProviderManager.addIQProvider(ColibriConferenceIQ.ELEMENT_NAME, ColibriConferenceIQ.NAMESPACE,
+				new ColibriIQProvider());
 
-        // register Jingle
-        ProviderManager.addIQProvider(
-            JingleIQ.ELEMENT_NAME,
-            JingleIQ.NAMESPACE,
-            new JingleIQProvider());
-    }
+		// register Jingle
+		ProviderManager.addIQProvider(JingleIQ.ELEMENT_NAME, JingleIQ.NAMESPACE, new JingleIQProvider());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ColibriConference createNewConference()
-    {
-        ColibriConference conf
-            = new ColibriConferenceImpl(connection, eventAdmin);
-        logger.info("Conference created: " + conf);
-        return conf;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ColibriConference createNewConference() {
+		ColibriConference conf = new ColibriConferenceImpl(connection, eventAdmin);
+		logger.info("Conference created: " + conf);
+		return conf;
+	}
 }

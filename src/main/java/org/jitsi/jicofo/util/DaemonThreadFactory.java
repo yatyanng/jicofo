@@ -17,27 +17,24 @@
  */
 package org.jitsi.jicofo.util;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * A thread factory that creates daemon threads.
  *
  * @author Pawel Domas
  */
-public class DaemonThreadFactory
-    implements ThreadFactory
-{
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Thread newThread(Runnable r)
-    {
-        Thread t = Executors.defaultThreadFactory().newThread(r);
-        if (!t.isDaemon())
-        {
-            t.setDaemon(true);
-        }
-        return t;
-    }
+public class DaemonThreadFactory implements ThreadFactory {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Thread newThread(Runnable r) {
+		Thread t = Executors.defaultThreadFactory().newThread(r);
+		if (!t.isDaemon()) {
+			t.setDaemon(true);
+		}
+		return t;
+	}
 }

@@ -17,60 +17,49 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.packet.ExtensionElement;
+
+import net.java.sip.communicator.service.protocol.ChatRoom;
+import net.java.sip.communicator.service.protocol.OperationSetJitsiMeetTools;
 
 /**
  * Partial implementation of {@link OperationSetMeetToolsImpl}.
  *
  * @author Pawel Domas
  */
-public class OperationSetMeetToolsImpl
-    implements OperationSetJitsiMeetTools
-{
-    @Override
-    public void addSupportedFeature(String featureName)
-    {
+public class OperationSetMeetToolsImpl implements OperationSetJitsiMeetTools {
+	@Override
+	public void addSupportedFeature(String featureName) {
 
-    }
+	}
 
-    @Override
-    public void removeSupportedFeature(String s)
-    {
+	@Override
+	public void removeSupportedFeature(String s) {
 
-    }
+	}
 
-    @Override
-    public void sendPresenceExtension(ChatRoom chatRoom,
-                                      ExtensionElement extension)
-    {
-        ((ChatRoomImpl)chatRoom).setPresenceExtension(extension, false);
-    }
+	@Override
+	public void sendPresenceExtension(ChatRoom chatRoom, ExtensionElement extension) {
+		((ChatRoomImpl) chatRoom).setPresenceExtension(extension, false);
+	}
 
-    @Override
-    public void removePresenceExtension(ChatRoom chatRoom,
-                                        ExtensionElement extension)
-    {
-        ((ChatRoomImpl)chatRoom).setPresenceExtension(extension, true);
-    }
+	@Override
+	public void removePresenceExtension(ChatRoom chatRoom, ExtensionElement extension) {
+		((ChatRoomImpl) chatRoom).setPresenceExtension(extension, true);
+	}
 
-    @Override
-    public void setPresenceStatus(ChatRoom chatRoom, String statusMessage)
-    {
+	@Override
+	public void setPresenceStatus(ChatRoom chatRoom, String statusMessage) {
 
-    }
+	}
 
-    @Override
-    public void addRequestListener(
-        JitsiMeetRequestListener listener)
-    {
+	@Override
+	public void addRequestListener(JitsiMeetRequestListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeRequestListener(
-        JitsiMeetRequestListener listener)
-    {
+	@Override
+	public void removeRequestListener(JitsiMeetRequestListener listener) {
 
-    }
+	}
 }

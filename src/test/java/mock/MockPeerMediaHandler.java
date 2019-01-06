@@ -17,48 +17,40 @@
  */
 package mock;
 
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.media.*;
-import org.jitsi.service.neomedia.event.*;
+import org.jitsi.service.neomedia.event.SrtpListener;
+
+import net.java.sip.communicator.service.protocol.OperationFailedException;
+import net.java.sip.communicator.service.protocol.media.CallPeerMediaHandler;
+import net.java.sip.communicator.service.protocol.media.TransportManager;
 
 /**
  * @author Pawel Domas
  */
-public class MockPeerMediaHandler
-    extends CallPeerMediaHandler<MockCallPeer>
-{
-    /**
-     * Creates a new handler that will be managing media streams for
-     * <tt>peer</tt>.
-     *
-     * @param peer         the <tt>CallPeer</tt> instance that we will be managing
-     *                     media for.
-     * @param srtpListener the object that receives SRTP security events.
-     */
-    public MockPeerMediaHandler(
-        MockCallPeer peer,
-        SrtpListener srtpListener)
-    {
-        super(peer, srtpListener);
-    }
+public class MockPeerMediaHandler extends CallPeerMediaHandler<MockCallPeer> {
+	/**
+	 * Creates a new handler that will be managing media streams for <tt>peer</tt>.
+	 *
+	 * @param peer         the <tt>CallPeer</tt> instance that we will be managing
+	 *                     media for.
+	 * @param srtpListener the object that receives SRTP security events.
+	 */
+	public MockPeerMediaHandler(MockCallPeer peer, SrtpListener srtpListener) {
+		super(peer, srtpListener);
+	}
 
-    @Override
-    protected TransportManager<MockCallPeer> getTransportManager()
-    {
-        return null;
-    }
+	@Override
+	protected TransportManager<MockCallPeer> getTransportManager() {
+		return null;
+	}
 
-    @Override
-    protected TransportManager<MockCallPeer> queryTransportManager()
-    {
-        return null;
-    }
+	@Override
+	protected TransportManager<MockCallPeer> queryTransportManager() {
+		return null;
+	}
 
-    @Override
-    protected void throwOperationFailedException(String message, int errorCode,
-                                                 Throwable cause)
-        throws OperationFailedException
-    {
-        throw new OperationFailedException(message, errorCode, cause);
-    }
+	@Override
+	protected void throwOperationFailedException(String message, int errorCode, Throwable cause)
+			throws OperationFailedException {
+		throw new OperationFailedException(message, errorCode, cause);
+	}
 }

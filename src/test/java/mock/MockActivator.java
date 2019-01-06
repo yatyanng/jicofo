@@ -17,78 +17,65 @@
  */
 package mock;
 
-import mock.muc.*;
-import net.java.sip.communicator.impl.protocol.jabber.*;
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.jabber.*;
-import org.jitsi.impl.protocol.xmpp.*;
-import org.osgi.framework.*;
+import java.util.Hashtable;
 
-import java.util.*;
+import org.jitsi.impl.protocol.xmpp.XmppProtocolActivator;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+
+import mock.muc.MockMultiUserChatOpSet;
+import net.java.sip.communicator.service.protocol.ProtocolNames;
+import net.java.sip.communicator.service.protocol.ProtocolProviderFactory;
 
 /**
  * Registers mock protocol provider factories for SIP and XMPP.
  *
  * @author Pawel Domas
  */
-public class MockActivator
-    implements BundleActivator
-{
-    private ServiceRegistration<?> xmppRegistration;
+public class MockActivator implements BundleActivator {
+	private ServiceRegistration<?> xmppRegistration;
 
-    private ServiceRegistration<?> sipRegistration;
+	private ServiceRegistration<?> sipRegistration;
 
-    private MockProtocolProviderFactory sipFactory;
+	private MockProtocolProviderFactory sipFactory;
 
-    private MockProtocolProviderFactory xmppFactory;
+	private MockProtocolProviderFactory xmppFactory;
 
-    @Override
-    public void start(BundleContext bundleContext)
-        throws Exception
-    {
-        XmppProtocolActivator.registerXmppExtensions();
+	@Override
+	public void start(BundleContext bundleContext) throws Exception {
+		XmppProtocolActivator.registerXmppExtensions();
 
-        sipFactory
-            = new MockProtocolProviderFactory(
-                    bundleContext, ProtocolNames.SIP);
+		sipFactory = new MockProtocolProviderFactory(bundleContext, ProtocolNames.SIP);
 
-        xmppFactory
-            = new MockProtocolProviderFactory(
-                    bundleContext, ProtocolNames.JABBER);
+		xmppFactory = new MockProtocolProviderFactory(bundleContext, ProtocolNames.JABBER);
 
-        Hashtable<String, String> hashtable = new Hashtable<String, String>();
+		Hashtable<String, String> hashtable = new Hashtable<String, String>();
 
-        // Register XMPP
-        hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.JABBER);
+		// Register XMPP
+		hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.JABBER);
 
-        xmppRegistration = bundleContext.registerService(
-            ProtocolProviderFactory.class.getName(),
-            xmppFactory,
-            hashtable);
+		xmppRegistration = bundleContext.registerService(ProtocolProviderFactory.class.getName(), xmppFactory,
+				hashtable);
 
-        // Register SIP
-        hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.SIP);
+		// Register SIP
+		hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.SIP);
 
-        sipRegistration = bundleContext.registerService(
-            ProtocolProviderFactory.class.getName(),
-            sipFactory,
-            hashtable);
-    }
+		sipRegistration = bundleContext.registerService(ProtocolProviderFactory.class.getName(), sipFactory, hashtable);
+	}
 
-    @Override
-    public void stop(BundleContext bundleContext)
-        throws Exception
-    {
-        xmppFactory.stop();
+	@Override
+	public void stop(BundleContext bundleContext) throws Exception {
+		xmppFactory.stop();
 
-        sipFactory.stop();
+		sipFactory.stop();
 
-        if (xmppRegistration != null)
-            xmppRegistration.unregister();
+		if (xmppRegistration != null)
+			xmppRegistration.unregister();
 
-        if (sipRegistration != null)
-            sipRegistration.unregister();
+		if (sipRegistration != null)
+			sipRegistration.unregister();
 
-        MockMultiUserChatOpSet.cleanMucSharing();
-    }
+		MockMultiUserChatOpSet.cleanMucSharing();
+	}
 }

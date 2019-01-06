@@ -17,94 +17,88 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
+import java.util.List;
 
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.packet.XMPPError;
 
-import java.util.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.ContentPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQ;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.ReasonPacketExtension;
 
 /**
  * Listener class notified about Jingle requests received during the session.
  *
  * @author Pawel Domas
  */
-public interface JingleRequestHandler
-{
-    /**
-     * Callback fired when 'source-add' proprietary Jingle notification is
-     * received.
-     *
-     * @param jingleSession the session that has received the notification.
-     * @param contents contents list that describe media SSRCs. We expect
-     *                 to find {@link net.java.sip.communicator.impl.protocol
-     *                 .jabber.extensions.colibri.SourcePacketExtension} inside
-     *                 of <tt>RtpDescriptionPacketExtension</tt> or in the
-     *                 <tt>ContentPacketExtension</tt> directly.
-     *
-     * @return <tt>XMPPError</tt> if an error should be returned as response to
-     * the original request or <tt>null</tt> if the processing was successful.
-     */
-    XMPPError onAddSource(JingleSession jingleSession,
-                     List<ContentPacketExtension> contents);
+public interface JingleRequestHandler {
+	/**
+	 * Callback fired when 'source-add' proprietary Jingle notification is received.
+	 *
+	 * @param jingleSession the session that has received the notification.
+	 * @param contents      contents list that describe media SSRCs. We expect to
+	 *                      find
+	 *                      {@link net.java.sip.communicator.impl.protocol .jabber.extensions.colibri.SourcePacketExtension}
+	 *                      inside of <tt>RtpDescriptionPacketExtension</tt> or in
+	 *                      the <tt>ContentPacketExtension</tt> directly.
+	 *
+	 * @return <tt>XMPPError</tt> if an error should be returned as response to the
+	 *         original request or <tt>null</tt> if the processing was successful.
+	 */
+	XMPPError onAddSource(JingleSession jingleSession, List<ContentPacketExtension> contents);
 
-    /**
-     * Callback fired when 'source-remove' proprietary Jingle notification is
-     * received.
-     *
-     * @param jingleSession the session that has received the notification.
-     * @param contents contents list that describe media SSRCs. We expect
-     *                 to find {@link net.java.sip.communicator.impl.protocol
-     *                 .jabber.extensions.colibri.SourcePacketExtension} inside
-     *                 of <tt>RtpDescriptionPacketExtension</tt> or in the
-     *                 <tt>ContentPacketExtension</tt> directly.
-     *
-     * @return <tt>XMPPError</tt> if an error should be returned as response to
-     * the original request or <tt>null</tt> if the processing was successful.
-     */
-    XMPPError onRemoveSource(JingleSession jingleSession,
-                             List<ContentPacketExtension> contents);
+	/**
+	 * Callback fired when 'source-remove' proprietary Jingle notification is
+	 * received.
+	 *
+	 * @param jingleSession the session that has received the notification.
+	 * @param contents      contents list that describe media SSRCs. We expect to
+	 *                      find
+	 *                      {@link net.java.sip.communicator.impl.protocol .jabber.extensions.colibri.SourcePacketExtension}
+	 *                      inside of <tt>RtpDescriptionPacketExtension</tt> or in
+	 *                      the <tt>ContentPacketExtension</tt> directly.
+	 *
+	 * @return <tt>XMPPError</tt> if an error should be returned as response to the
+	 *         original request or <tt>null</tt> if the processing was successful.
+	 */
+	XMPPError onRemoveSource(JingleSession jingleSession, List<ContentPacketExtension> contents);
 
-    /**
-     * Callback fired when 'session-accept' is received from the client.
-     *
-     * @param jingleSession the session that has received the notification.
-     * @param answer content list that describe peer media offer.
-     *
-     * @return <tt>XMPPError</tt> if an error should be returned as response to
-     * the original request or <tt>null</tt> if the processing was successful.
-     */
-    XMPPError onSessionAccept(JingleSession jingleSession,
-                         List<ContentPacketExtension> answer);
-    
-    XMPPError onSessionTerminate(JingleSession jingleSession,
-    		ReasonPacketExtension reason);
+	/**
+	 * Callback fired when 'session-accept' is received from the client.
+	 *
+	 * @param jingleSession the session that has received the notification.
+	 * @param answer        content list that describe peer media offer.
+	 *
+	 * @return <tt>XMPPError</tt> if an error should be returned as response to the
+	 *         original request or <tt>null</tt> if the processing was successful.
+	 */
+	XMPPError onSessionAccept(JingleSession jingleSession, List<ContentPacketExtension> answer);
 
-    /**
-     * Callback fired when 'transport-info' is received from the client.
-     *
-     * @param jingleSession the session that has received the notification.
-     * @param contents content list that contains media transport description.
-     */
-    void onTransportInfo(JingleSession jingleSession,
-                         List<ContentPacketExtension> contents);
+	XMPPError onSessionTerminate(JingleSession jingleSession, ReasonPacketExtension reason);
 
-    /**
-     * Called when 'transport-accept' IQ is received from the client.
-     *
-     * @param jingleSession the session that has received the notification
-     * @param contents content list that contains media transport description
-     *
-     * @return <tt>XMPPError</tt> if an error should be returned as response to
-     * the original request or <tt>null</tt> if the processing was successful.
-     */
-    XMPPError onTransportAccept(JingleSession jingleSession,
-                           List<ContentPacketExtension> contents);
+	/**
+	 * Callback fired when 'transport-info' is received from the client.
+	 *
+	 * @param jingleSession the session that has received the notification.
+	 * @param contents      content list that contains media transport description.
+	 */
+	void onTransportInfo(JingleSession jingleSession, List<ContentPacketExtension> contents);
 
-    /**
-     * Called when 'transport-reject' IQ is received from the client.
-     *
-     * @param jingleSession the session that has received the notification
-     * @param rejectIq full reject IQ provided for further analysis purposes
-     */
-    void onTransportReject(JingleSession jingleSession, JingleIQ rejectIq);
+	/**
+	 * Called when 'transport-accept' IQ is received from the client.
+	 *
+	 * @param jingleSession the session that has received the notification
+	 * @param contents      content list that contains media transport description
+	 *
+	 * @return <tt>XMPPError</tt> if an error should be returned as response to the
+	 *         original request or <tt>null</tt> if the processing was successful.
+	 */
+	XMPPError onTransportAccept(JingleSession jingleSession, List<ContentPacketExtension> contents);
+
+	/**
+	 * Called when 'transport-reject' IQ is received from the client.
+	 *
+	 * @param jingleSession the session that has received the notification
+	 * @param rejectIq      full reject IQ provided for further analysis purposes
+	 */
+	void onTransportReject(JingleSession jingleSession, JingleIQ rejectIq);
 }

@@ -17,68 +17,56 @@
  */
 package org.jitsi.jicofo;
 
-import mock.*;
-
-import org.jitsi.impl.protocol.xmpp.extensions.*;
-import org.jitsi.jicofo.xmpp.*;
-import org.jitsi.xmpp.util.*;
-
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-import org.xmpp.packet.*;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import org.jitsi.impl.protocol.xmpp.extensions.ConferenceIq;
+import org.jitsi.jicofo.xmpp.FocusComponent;
+import org.jitsi.xmpp.util.IQUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.xmpp.packet.IQ;
+
+import mock.MockMainMethodActivator;
 
 /**
  *
  */
 @RunWith(JUnit4.class)
-public class XmppTest
-{
-    static OSGiHandler osgi = OSGiHandler.getInstance();
+public class XmppTest {
+	static OSGiHandler osgi = OSGiHandler.getInstance();
 
-    @BeforeClass
-    public static void setUpClass()
-        throws Exception
-    {
-        osgi.init();
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		osgi.init();
+	}
 
-    @AfterClass
-    public static void tearDownClass()
-        throws Exception
-    {
-        osgi.shutdown();
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		osgi.shutdown();
+	}
 
-    @Test
-    public void testAllocateConference()
-        throws Exception
-    {
-        EntityBareJid roomName = JidCreate.entityBareFrom(
-                "testRoom@example.com");
+	@Test
+	public void testAllocateConference() throws Exception {
+		EntityBareJid roomName = JidCreate.entityBareFrom("testRoom@example.com");
 
-        FocusComponent focusComponent
-            = MockMainMethodActivator.getFocusComponent();
+		FocusComponent focusComponent = MockMainMethodActivator.getFocusComponent();
 
-        ConferenceIq conferenceIq = new ConferenceIq();
+		ConferenceIq conferenceIq = new ConferenceIq();
 
-        conferenceIq.setRoom(roomName);
+		conferenceIq.setRoom(roomName);
 
-        IQ result
-            = focusComponent.handleIQSetImpl(
-                IQUtils.convert(conferenceIq));
+		IQ result = focusComponent.handleIQSetImpl(IQUtils.convert(conferenceIq));
 
-        assertNotNull(result);
+		assertNotNull(result);
 
-        org.jivesoftware.smack.packet.IQ response =  IQUtils.convert(result);
-        assertTrue(response instanceof ConferenceIq);
+		org.jivesoftware.smack.packet.IQ response = IQUtils.convert(result);
+		assertTrue(response instanceof ConferenceIq);
 
-
-    }
+	}
 }

@@ -17,19 +17,17 @@
  */
 package mock;
 
-import java.math.*;
-import java.security.*;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 /**
  *
  * @author Pawel Domas
  */
-public class StringGenerator
-{
-    static private SecureRandom random = new SecureRandom();
+public class StringGenerator {
+	static private SecureRandom random = new SecureRandom();
 
-    static public String nextRandomStr()
-    {
-        return new BigInteger(130, random).toString(32);
-    }
+	static public String nextRandomStr() {
+		return new BigInteger(130, random).toString(32);
+	}
 }

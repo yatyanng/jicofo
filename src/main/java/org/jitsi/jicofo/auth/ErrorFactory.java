@@ -17,97 +17,83 @@
  */
 package org.jitsi.jicofo.auth;
 
-import org.jitsi.impl.protocol.xmpp.extensions.*;
-import org.jitsi.jicofo.reservation.*;
-import org.jivesoftware.smack.packet.*;
+import org.jitsi.impl.protocol.xmpp.extensions.ConferenceIq;
+import org.jitsi.impl.protocol.xmpp.extensions.ReservationErrorPacketExt;
+import org.jitsi.impl.protocol.xmpp.extensions.SessionInvalidPacketExtension;
+import org.jitsi.jicofo.reservation.ReservationSystem;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XMPPError;
 
 /**
  * Utility class for creating XMPP error responses.
  *
  * @author Pawel Domas
  */
-public class ErrorFactory
-{
-    /**
-     * Creates 'not-authorized' XMPP error response to given <tt>query</tt>.
-     *
-     * @param query the IQ for which error response wil be created.
-     * @param msg optional error description to be included in the response.
-     *
-     * @return XMPP 'not-authorized' error response to given <tt>query</tt>.
-     */
-    public static IQ createNotAuthorizedError(IQ query, String msg)
-    {
-        final XMPPError error
-            = XMPPError.from(XMPPError.Condition.not_authorized, msg).build();
+public class ErrorFactory {
+	/**
+	 * Creates 'not-authorized' XMPP error response to given <tt>query</tt>.
+	 *
+	 * @param query the IQ for which error response wil be created.
+	 * @param msg   optional error description to be included in the response.
+	 *
+	 * @return XMPP 'not-authorized' error response to given <tt>query</tt>.
+	 */
+	public static IQ createNotAuthorizedError(IQ query, String msg) {
+		final XMPPError error = XMPPError.from(XMPPError.Condition.not_authorized, msg).build();
 
-        return IQ.createErrorResponse(query, error);
-    }
+		return IQ.createErrorResponse(query, error);
+	}
 
-    /**
-     * Creates 'not-acceptable' XMPP error response with application specific
-     * 'session-invalid' error extension.
-     *
-     * @param query the IQ for which error response will be created.
-     *
-     * @return XMPP 'not-acceptable' error response to given <tt>query</tt>
-     *         with application specific 'session-invalid' extension.
-     */
-    public static IQ createSessionInvalidResponse(IQ query)
-    {
-        final XMPPError error
-            = XMPPError.from(
-                    XMPPError.Condition.not_acceptable,
-                    "invalid session")
-                // session-invalid application specific error
-                .addExtension(new SessionInvalidPacketExtension())
-                .build();
+	/**
+	 * Creates 'not-acceptable' XMPP error response with application specific
+	 * 'session-invalid' error extension.
+	 *
+	 * @param query the IQ for which error response will be created.
+	 *
+	 * @return XMPP 'not-acceptable' error response to given <tt>query</tt> with
+	 *         application specific 'session-invalid' extension.
+	 */
+	public static IQ createSessionInvalidResponse(IQ query) {
+		final XMPPError error = XMPPError.from(XMPPError.Condition.not_acceptable, "invalid session")
+				// session-invalid application specific error
+				.addExtension(new SessionInvalidPacketExtension()).build();
 
-        return IQ.createErrorResponse(query, error);
-    }
+		return IQ.createErrorResponse(query, error);
+	}
 
-    /**
-     * Creates 'not-acceptable' XMPP error response to given <tt>query</tt>.
-     *
-     * @param query the IQ for which error response will be created.
-     *
-     * @param errorMessage application specific error message included in
-     *                     error response.
-     *
-     * @return 'not-acceptable' XMPP error response to given <tt>query</tt> with
-     *          included <tt>errorMessage</tt>.
-     */
-    public static IQ createNotAcceptableError(IQ query, String errorMessage)
-    {
-        // not acceptable
-        final XMPPError error
-            = XMPPError.from(XMPPError.Condition.not_acceptable, errorMessage)
-                .build();
+	/**
+	 * Creates 'not-acceptable' XMPP error response to given <tt>query</tt>.
+	 *
+	 * @param query        the IQ for which error response will be created.
+	 *
+	 * @param errorMessage application specific error message included in error
+	 *                     response.
+	 *
+	 * @return 'not-acceptable' XMPP error response to given <tt>query</tt> with
+	 *         included <tt>errorMessage</tt>.
+	 */
+	public static IQ createNotAcceptableError(IQ query, String errorMessage) {
+		// not acceptable
+		final XMPPError error = XMPPError.from(XMPPError.Condition.not_acceptable, errorMessage).build();
 
-        return IQ.createErrorResponse(query, error);
-    }
+		return IQ.createErrorResponse(query, error);
+	}
 
-    /**
-     * Creates XMPP error response which will describe given
-     * <tt>ReservationSystem.Result</tt>.
-     *
-     * @param query query IQ for which XMPP error response will be crated.
-     * @param result reservation system result which contains all details about
-     *               specific reservation error.
-     *
-     * @return XMPP error response which describes given
-     *         <tt>ReservationSystem.Result</tt>.
-     */
-    public static IQ createReservationError(ConferenceIq query,
-                                            ReservationSystem.Result result)
-    {
-        final XMPPError error
-            = XMPPError.from(
-                    XMPPError.Condition.service_unavailable,
-                    result.getErrorMessage())
-                .addExtension(new ReservationErrorPacketExt(result.getCode()))
-                .build();
+	/**
+	 * Creates XMPP error response which will describe given
+	 * <tt>ReservationSystem.Result</tt>.
+	 *
+	 * @param query  query IQ for which XMPP error response will be crated.
+	 * @param result reservation system result which contains all details about
+	 *               specific reservation error.
+	 *
+	 * @return XMPP error response which describes given
+	 *         <tt>ReservationSystem.Result</tt>.
+	 */
+	public static IQ createReservationError(ConferenceIq query, ReservationSystem.Result result) {
+		final XMPPError error = XMPPError.from(XMPPError.Condition.service_unavailable, result.getErrorMessage())
+				.addExtension(new ReservationErrorPacketExt(result.getCode())).build();
 
-        return IQ.createErrorResponse(query, error);
-    }
+		return IQ.createErrorResponse(query, error);
+	}
 }

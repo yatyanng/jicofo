@@ -17,11 +17,11 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import net.java.sip.communicator.util.*;
+import org.jitsi.protocol.xmpp.AbstractOperationSetJingle;
+import org.jitsi.protocol.xmpp.XmppConnection;
+import org.jxmpp.jid.EntityFullJid;
 
-import org.jitsi.protocol.xmpp.*;
-
-import org.jxmpp.jid.*;
+import net.java.sip.communicator.util.Logger;
 
 /**
  * Implementation of {@link OperationSetJingleImpl} for
@@ -29,44 +29,39 @@ import org.jxmpp.jid.*;
  *
  * @author Pawel Domas
  */
-public class OperationSetJingleImpl
-    extends AbstractOperationSetJingle
-{
-    /**
-     * The logger used by this class.
-     */
-    private final static Logger logger
-            = Logger.getLogger(OperationSetJingleImpl.class);
+public class OperationSetJingleImpl extends AbstractOperationSetJingle {
+	/**
+	 * The logger used by this class.
+	 */
+	private final static Logger logger = Logger.getLogger(OperationSetJingleImpl.class);
 
-    /**
-     * Parent {@link XmppProtocolProvider}.
-     */
-    private final XmppProtocolProvider xmppProvider;
+	/**
+	 * Parent {@link XmppProtocolProvider}.
+	 */
+	private final XmppProtocolProvider xmppProvider;
 
-    /**
-     * Creates new instance of <tt>OperationSetJingleImpl</tt>.
-     *
-     * @param xmppProvider parent XMPP protocol provider
-     */
-    OperationSetJingleImpl(XmppProtocolProvider xmppProvider)
-    {
-        this.xmppProvider = xmppProvider;
-    }
+	/**
+	 * Creates new instance of <tt>OperationSetJingleImpl</tt>.
+	 *
+	 * @param xmppProvider parent XMPP protocol provider
+	 */
+	OperationSetJingleImpl(XmppProtocolProvider xmppProvider) {
+		this.xmppProvider = xmppProvider;
+	}
 
-    /**
-     * Returns our XMPP address that will be used as 'from' attribute
-     * in Jingle QIs.
-     */
-    protected EntityFullJid getOurJID()
-    {
-        return xmppProvider.getOurJid();
-    }
+	/**
+	 * Returns our XMPP address that will be used as 'from' attribute in Jingle QIs.
+	 */
+	@Override
+	protected EntityFullJid getOurJID() {
+		return xmppProvider.getOurJid();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    protected XmppConnection getConnection()
-    {
-        return xmppProvider.getConnectionAdapter();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected XmppConnection getConnection() {
+		return xmppProvider.getConnectionAdapter();
+	}
 }

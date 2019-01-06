@@ -17,237 +17,179 @@
  */
 package mock.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
-import org.jitsi.protocol.xmpp.*;
-import org.jitsi.util.*;
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.iqrequest.*;
-import org.jivesoftware.smack.packet.*;
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.parts.*;
-import org.jxmpp.stringprep.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-import java.io.*;
-import java.util.*;
+import org.jitsi.protocol.xmpp.XmppConnection;
+import org.jitsi.util.Logger;
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.StanzaCollector;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.iqrequest.IQRequestHandler;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Nonza;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 
-import static org.jivesoftware.smack.SmackException.*;
+import net.java.sip.communicator.service.protocol.OperationFailedException;
 
-public class MockXmppConnection
-    extends AbstractXMPPConnection
-    implements XmppConnection
-{
-    private final static Logger logger
-            = Logger.getLogger(MockXmppConnection.class);
+public class MockXmppConnection extends AbstractXMPPConnection implements XmppConnection {
+	private final static Logger logger = Logger.getLogger(MockXmppConnection.class);
 
-    private static final Map<Jid, MockXmppConnection> sharedStanzaQueue
-            = Collections.synchronizedMap(
-                    new HashMap<Jid, MockXmppConnection>());
+	private static final Map<Jid, MockXmppConnection> sharedStanzaQueue = Collections
+			.synchronizedMap(new HashMap<Jid, MockXmppConnection>());
 
-    private static class MockXmppConnectionConfiguration
-            extends ConnectionConfiguration
-    {
-        MockXmppConnectionConfiguration(Builder builder)
-        {
-            super(builder);
-        }
+	private static class MockXmppConnectionConfiguration extends ConnectionConfiguration {
+		MockXmppConnectionConfiguration(Builder builder) {
+			super(builder);
+		}
 
-        public static final class Builder
-                extends
-                ConnectionConfiguration.Builder<Builder,
-                        MockXmppConnectionConfiguration>
-        {
-            @Override
-            public MockXmppConnectionConfiguration build()
-            {
-                return new MockXmppConnectionConfiguration(this);
-            }
+		public static final class Builder
+				extends ConnectionConfiguration.Builder<Builder, MockXmppConnectionConfiguration> {
+			@Override
+			public MockXmppConnectionConfiguration build() {
+				return new MockXmppConnectionConfiguration(this);
+			}
 
-            @Override
-            public Builder setXmppDomain(String xmppServiceDomain)
-            {
-                try
-                {
-                    return super.setXmppDomain(xmppServiceDomain);
-                }
-                catch (XmppStringprepException e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
+			@Override
+			public Builder setXmppDomain(String xmppServiceDomain) {
+				try {
+					return super.setXmppDomain(xmppServiceDomain);
+				} catch (XmppStringprepException e) {
+					throw new RuntimeException(e);
+				}
+			}
 
-            @Override
-            protected Builder getThis() {
-                return this;
-            }
-        }
-    }
+			@Override
+			protected Builder getThis() {
+				return this;
+			}
+		}
+	}
 
-    public MockXmppConnection(final Jid ourJid)
-    {
-        super(new MockXmppConnectionConfiguration.Builder()
-                .setXmppDomain("example.com")
-                .setUsernameAndPassword("mock", "mockpass")
-                .build());
-        if (ourJid instanceof EntityFullJid)
-        {
-            user = (EntityFullJid) ourJid;
-        }
-        else
-        {
-            user = new AnyJidAsEntityFullJid(ourJid);
-        }
+	public MockXmppConnection(final Jid ourJid) {
+		super(new MockXmppConnectionConfiguration.Builder().setXmppDomain("example.com")
+				.setUsernameAndPassword("mock", "mockpass").build());
+		if (ourJid instanceof EntityFullJid) {
+			user = (EntityFullJid) ourJid;
+		} else {
+			user = new AnyJidAsEntityFullJid(ourJid);
+		}
 
-        try
-        {
-            setFromMode(FromMode.UNCHANGED);
-            // FIXME smack4: wait for Smack#163
-            setReplyToUnknownIq(false);
-            connect();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+		try {
+			setFromMode(FromMode.UNCHANGED);
+			// FIXME smack4: wait for Smack#163
+			setReplyToUnknownIq(false);
+			connect();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Override
-    public void sendNonza(Nonza element)
-            throws NotConnectedException, InterruptedException
-    {
-    }
+	@Override
+	public void sendNonza(Nonza element) throws NotConnectedException, InterruptedException {
+	}
 
-    @Override
-    public boolean isUsingCompression()
-    {
-        return false;
-    }
+	@Override
+	public boolean isUsingCompression() {
+		return false;
+	}
 
-    @Override
-    protected void loginInternal(String username,
-                                 String password,
-                                 Resourcepart resource)
-            throws XMPPException, SmackException,
-            IOException, InterruptedException
-    {
-        // nothing to do
-    }
+	@Override
+	protected void loginInternal(String username, String password, Resourcepart resource)
+			throws XMPPException, SmackException, IOException, InterruptedException {
+		// nothing to do
+	}
 
-    @Override
-    protected void connectInternal()
-            throws SmackException, IOException,
-            XMPPException, InterruptedException
-    {
-        sharedStanzaQueue.put(user, this);
-        tlsHandled.reportSuccess();
-        saslFeatureReceived.reportSuccess();
-    }
+	@Override
+	protected void connectInternal() throws SmackException, IOException, XMPPException, InterruptedException {
+		sharedStanzaQueue.put(user, this);
+		tlsHandled.reportSuccess();
+		saslFeatureReceived.reportSuccess();
+	}
 
-    @Override
-    protected void sendStanzaInternal(final Stanza packet)
-            throws NotConnectedException, InterruptedException
-    {
-        packet.setFrom(user);
-        final MockXmppConnection target = sharedStanzaQueue.get(packet.getTo());
-        if (target == null)
-        {
-            System.out.println("Connection for " + packet.getTo() + " not found!");
-            return;
-        }
+	@Override
+	protected void sendStanzaInternal(final Stanza packet) throws NotConnectedException, InterruptedException {
+		packet.setFrom(user);
+		final MockXmppConnection target = sharedStanzaQueue.get(packet.getTo());
+		if (target == null) {
+			System.out.println("Connection for " + packet.getTo() + " not found!");
+			return;
+		}
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                target.invokeStanzaCollectorsAndNotifyRecvListeners(packet);
-            }
-        });
-        t.start();
-    }
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				target.invokeStanzaCollectorsAndNotifyRecvListeners(packet);
+			}
+		});
+		t.start();
+	}
 
-    @Override
-    protected void shutdown()
-    {
-        sharedStanzaQueue.remove(user);
-        connected = false;
-    }
+	@Override
+	protected void shutdown() {
+		sharedStanzaQueue.remove(user);
+		connected = false;
+	}
 
-    @Override
-    public boolean isSecureConnection()
-    {
-        return false;
-    }
+	@Override
+	public boolean isSecureConnection() {
+		return false;
+	}
 
-    @Override
-    public void sendStanza(Stanza packet)
-    {
-        try
-        {
-            super.sendStanza(packet);
-        }
-        catch (NotConnectedException e)
-        {
-            logger.error("No connection - unable to send packet: "
-                    + packet.toXML(), e);
-        }
-        catch (InterruptedException e)
-        {
-            logger.error("Failed to send packet: "
-                    + packet.toXML().toString(), e);
-        }
-    }
+	@Override
+	public void sendStanza(Stanza packet) {
+		try {
+			super.sendStanza(packet);
+		} catch (NotConnectedException e) {
+			logger.error("No connection - unable to send packet: " + packet.toXML(), e);
+		} catch (InterruptedException e) {
+			logger.error("Failed to send packet: " + packet.toXML().toString(), e);
+		}
+	}
 
-    @Override
-    public IQ sendPacketAndGetReply(IQ packet)
-            throws OperationFailedException
-    {
-        Objects.requireNonNull(packet, "packet");
+	@Override
+	public IQ sendPacketAndGetReply(IQ packet) throws OperationFailedException {
+		Objects.requireNonNull(packet, "packet");
 
-        try
-        {
-            packet.setFrom(user);
-            StanzaCollector packetCollector
-                    = createStanzaCollectorAndSend(packet);
-            try
-            {
-                //FIXME: retry allocation on timeout
-                return packetCollector.nextResult();
-            }
-            finally
-            {
-                packetCollector.cancel();
-            }
-        }
-        catch (InterruptedException
-               /* |XMPPException.XMPPErrorException
-                | NoResponseException*/ e)
-        {
-            throw new OperationFailedException(
-                    "No response or failed otherwise: " + packet.toXML(),
-                    OperationFailedException.GENERAL_ERROR,
-                    e);
-        }
-        catch (NotConnectedException e)
-        {
-            throw new OperationFailedException(
-                    "No connection - unable to send packet: " + packet.toXML(),
-                    OperationFailedException.PROVIDER_NOT_REGISTERED,
-                    e);
-        }
-    }
+		try {
+			packet.setFrom(user);
+			StanzaCollector packetCollector = createStanzaCollectorAndSend(packet);
+			try {
+				// FIXME: retry allocation on timeout
+				return packetCollector.nextResult();
+			} finally {
+				packetCollector.cancel();
+			}
+		} catch (InterruptedException
+		/*
+		 * |XMPPException.XMPPErrorException | NoResponseException
+		 */ e) {
+			throw new OperationFailedException("No response or failed otherwise: " + packet.toXML(),
+					OperationFailedException.GENERAL_ERROR, e);
+		} catch (NotConnectedException e) {
+			throw new OperationFailedException("No connection - unable to send packet: " + packet.toXML(),
+					OperationFailedException.PROVIDER_NOT_REGISTERED, e);
+		}
+	}
 
-    @Override
-    public IQRequestHandler registerIQRequestHandler(IQRequestHandler iqRequestHandler)
-    {
-        IQRequestHandler previous = super.registerIQRequestHandler(iqRequestHandler);
-        if (previous != null && previous != iqRequestHandler)
-        {
-            throw new RuntimeException("A IQ handler for "
-                    + iqRequestHandler.getElement()
-                    + " was already registered! Old: "
-                    + previous.toString()
-                    + ", New: " + iqRequestHandler.toString());
-        }
+	@Override
+	public IQRequestHandler registerIQRequestHandler(IQRequestHandler iqRequestHandler) {
+		IQRequestHandler previous = super.registerIQRequestHandler(iqRequestHandler);
+		if (previous != null && previous != iqRequestHandler) {
+			throw new RuntimeException("A IQ handler for " + iqRequestHandler.getElement()
+					+ " was already registered! Old: " + previous.toString() + ", New: " + iqRequestHandler.toString());
+		}
 
-        return previous;
-    }
+		return previous;
+	}
 }

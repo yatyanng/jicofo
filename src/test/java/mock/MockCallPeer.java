@@ -17,158 +17,135 @@
  */
 package mock;
 
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.event.*;
-import net.java.sip.communicator.service.protocol.media.*;
-import net.java.sip.communicator.util.*;
-import org.jitsi.service.neomedia.*;
+import org.jitsi.service.neomedia.MediaDirection;
+import org.jitsi.service.neomedia.MediaType;
+
+import net.java.sip.communicator.service.protocol.CallPeerState;
+import net.java.sip.communicator.service.protocol.Contact;
+import net.java.sip.communicator.service.protocol.OperationFailedException;
+import net.java.sip.communicator.service.protocol.event.ConferenceMembersSoundLevelListener;
+import net.java.sip.communicator.service.protocol.event.SoundLevelListener;
+import net.java.sip.communicator.service.protocol.media.MediaAwareCallPeer;
+import net.java.sip.communicator.util.Logger;
 
 /**
  * @author Pawel Domas
  */
-public class MockCallPeer
-    extends MediaAwareCallPeer<MockCall, MockPeerMediaHandler,
-                               MockProtocolProvider>
-{
-    /**
-     * The logger.
-     */
-    private final static Logger logger = Logger.getLogger(MockCallPeer.class);
+public class MockCallPeer extends MediaAwareCallPeer<MockCall, MockPeerMediaHandler, MockProtocolProvider> {
+	/**
+	 * The logger.
+	 */
+	private final static Logger logger = Logger.getLogger(MockCallPeer.class);
 
-    private final String address;
+	private final String address;
 
-    private final MockCall call;
+	private final MockCall call;
 
-    public MockCallPeer(String address, MockCall call)
-    {
-        super(call);
+	public MockCallPeer(String address, MockCall call) {
+		super(call);
 
-        this.address = address;
-        this.call = call;
+		this.address = address;
+		this.call = call;
 
-        setMediaHandler(new MockPeerMediaHandler(this, null));
-    }
+		setMediaHandler(new MockPeerMediaHandler(this, null));
+	}
 
-    @Override
-    public void addConferenceMembersSoundLevelListener(
-        ConferenceMembersSoundLevelListener listener)
-    {
+	@Override
+	public void addConferenceMembersSoundLevelListener(ConferenceMembersSoundLevelListener listener) {
 
-    }
+	}
 
-    @Override
-    public void addStreamSoundLevelListener(SoundLevelListener listener)
-    {
+	@Override
+	public void addStreamSoundLevelListener(SoundLevelListener listener) {
 
-    }
+	}
 
-    @Override
-    public String getAddress()
-    {
-        return address;
-    }
+	@Override
+	public String getAddress() {
+		return address;
+	}
 
-    @Override
-    public MockCall getCall()
-    {
-        return call;
-    }
+	@Override
+	public MockCall getCall() {
+		return call;
+	}
 
-    @Override
-    public Contact getContact()
-    {
-        return null;
-    }
+	@Override
+	public Contact getContact() {
+		return null;
+	}
 
-    @Override
-    public String getDisplayName()
-    {
-        return null;
-    }
+	@Override
+	public String getDisplayName() {
+		return null;
+	}
 
-    @Override
-    public byte[] getImage()
-    {
-        return new byte[0];
-    }
+	@Override
+	public byte[] getImage() {
+		return new byte[0];
+	}
 
-    @Override
-    public String getPeerID()
-    {
-        return null;
-    }
+	@Override
+	public String getPeerID() {
+		return null;
+	}
 
-    @Override
-    public String getURI()
-    {
-        return null;
-    }
+	@Override
+	public String getURI() {
+		return null;
+	}
 
-    @Override
-    public void removeConferenceMembersSoundLevelListener(
-        ConferenceMembersSoundLevelListener listener)
-    {
+	@Override
+	public void removeConferenceMembersSoundLevelListener(ConferenceMembersSoundLevelListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeStreamSoundLevelListener(SoundLevelListener listener)
-    {
+	@Override
+	public void removeStreamSoundLevelListener(SoundLevelListener listener) {
 
-    }
+	}
 
-    private CallPeerState lastState;
+	private CallPeerState lastState;
 
-    @Override
-    public void setState(CallPeerState newState, String reason, int reasonCode)
-    {
-        this.lastState = getState();
+	@Override
+	public void setState(CallPeerState newState, String reason, int reasonCode) {
+		this.lastState = getState();
 
-        super.setState(newState, reason, reasonCode);
-    }
+		super.setState(newState, reason, reasonCode);
+	}
 
-    @Override
-    public String getEntity()
-    {
-        throw new UnsupportedOperationException("getEntity");
-    }
+	@Override
+	public String getEntity() {
+		throw new UnsupportedOperationException("getEntity");
+	}
 
-    @Override
-    public MediaDirection getDirection(MediaType mediaType)
-    {
-        throw new UnsupportedOperationException("getDirection");
-    }
+	@Override
+	public MediaDirection getDirection(MediaType mediaType) {
+		throw new UnsupportedOperationException("getDirection");
+	}
 
-    public void putOnHold()
-    {
-        logger.info(this + " is now on hold, last state: " + lastState);
+	public void putOnHold() {
+		logger.info(this + " is now on hold, last state: " + lastState);
 
-        try
-        {
-            getMediaHandler().setLocallyOnHold(true);
-        }
-        catch (OperationFailedException e)
-        {
-            throw new RuntimeException(e);
-        }
+		try {
+			getMediaHandler().setLocallyOnHold(true);
+		} catch (OperationFailedException e) {
+			throw new RuntimeException(e);
+		}
 
-        setState(CallPeerState.ON_HOLD_LOCALLY);
-    }
+		setState(CallPeerState.ON_HOLD_LOCALLY);
+	}
 
-    public void putOffHold()
-    {
-        logger.info(this + " is now off hold, switch to: " + lastState);
+	public void putOffHold() {
+		logger.info(this + " is now off hold, switch to: " + lastState);
 
-        try
-        {
-            getMediaHandler().setLocallyOnHold(false);
-        }
-        catch (OperationFailedException e)
-        {
-            throw new RuntimeException(e);
-        }
+		try {
+			getMediaHandler().setLocallyOnHold(false);
+		} catch (OperationFailedException e) {
+			throw new RuntimeException(e);
+		}
 
-        setState(lastState);
-    }
+		setState(lastState);
+	}
 
 }

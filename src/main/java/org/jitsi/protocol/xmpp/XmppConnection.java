@@ -17,58 +17,58 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import net.java.sip.communicator.service.protocol.*;
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.iqrequest.*;
-import org.jivesoftware.smack.packet.*;
-import org.jxmpp.jid.*;
+import org.jivesoftware.smack.ExceptionCallback;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.iqrequest.IQRequestHandler;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jxmpp.jid.EntityFullJid;
+
+import net.java.sip.communicator.service.protocol.OperationFailedException;
 
 /**
  * The interface for Smack XMPP connection.
  *
  * @author Pawel Domas
  */
-public interface XmppConnection
-{
-    EntityFullJid getUser();
+public interface XmppConnection {
+	EntityFullJid getUser();
 
-    /**
-     * Sends given XMPP packet through this connection.
-     * XXX The method will silently fail to send the packet if the XMPP
-     * connection is broken (not connected). Use this method only if such
-     * behaviour is desired, otherwise {@link #sendPacketAndGetReply(IQ)}
-     * should be used instead.
-     *
-     * @param packet the packet to be sent.
-     */
-    void sendStanza(Stanza packet);
+	/**
+	 * Sends given XMPP packet through this connection. XXX The method will silently
+	 * fail to send the packet if the XMPP connection is broken (not connected). Use
+	 * this method only if such behaviour is desired, otherwise
+	 * {@link #sendPacketAndGetReply(IQ)} should be used instead.
+	 *
+	 * @param packet the packet to be sent.
+	 */
+	void sendStanza(Stanza packet);
 
-    /**
-     * Sends the packet and wait for reply in blocking mode.
-     *
-     * @param packet the packet to be sent.
-     *
-     * @return the response packet received within the time limit
-     *         or <tt>null</tt> if no response was collected.
-     *
-     * @throws OperationFailedException with
-     * {@link OperationFailedException#PROVIDER_NOT_REGISTERED} error code if
-     * the packet could not be sent, because the XMPP connection is broken.
-     */
-    IQ sendPacketAndGetReply(IQ packet)
-        throws OperationFailedException;
+	/**
+	 * Sends the packet and wait for reply in blocking mode.
+	 *
+	 * @param packet the packet to be sent.
+	 *
+	 * @return the response packet received within the time limit or <tt>null</tt>
+	 *         if no response was collected.
+	 *
+	 * @throws OperationFailedException with
+	 *                                  {@link OperationFailedException#PROVIDER_NOT_REGISTERED}
+	 *                                  error code if the packet could not be sent,
+	 *                                  because the XMPP connection is broken.
+	 */
+	IQ sendPacketAndGetReply(IQ packet) throws OperationFailedException;
 
-    IQRequestHandler registerIQRequestHandler(IQRequestHandler handler);
+	IQRequestHandler registerIQRequestHandler(IQRequestHandler handler);
 
-    IQRequestHandler unregisterIQRequestHandler(IQRequestHandler handler);
+	IQRequestHandler unregisterIQRequestHandler(IQRequestHandler handler);
 
-    /**
-     * See {@link XMPPConnection#sendIqWithResponseCallback(IQ, StanzaListener, ExceptionCallback, long)}
-     */
-    void sendIqWithResponseCallback(
-            IQ iq,
-            StanzaListener stanzaListener,
-            ExceptionCallback exceptionCallback,
-            long timeout)
-        throws SmackException.NotConnectedException, InterruptedException;
+	/**
+	 * See
+	 * {@link XMPPConnection#sendIqWithResponseCallback(IQ, StanzaListener, ExceptionCallback, long)}
+	 */
+	void sendIqWithResponseCallback(IQ iq, StanzaListener stanzaListener, ExceptionCallback exceptionCallback,
+			long timeout) throws SmackException.NotConnectedException, InterruptedException;
 }

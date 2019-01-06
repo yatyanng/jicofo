@@ -17,74 +17,59 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import net.java.sip.communicator.util.*;
+import java.util.List;
+import java.util.Set;
 
-import org.jitsi.jicofo.discovery.*;
-import org.jitsi.protocol.xmpp.*;
+import org.jitsi.jicofo.discovery.DiscoveryUtil;
+import org.jitsi.protocol.xmpp.OperationSetSimpleCaps;
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.XMPPException;
+import org.jxmpp.jid.Jid;
 
-import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.SmackException.*;
-import org.jxmpp.jid.*;
-
-import java.util.*;
+import net.java.sip.communicator.util.Logger;
 
 /**
  *
  */
-public class OpSetSimpleCapsImpl
-    implements OperationSetSimpleCaps
-{
-    /**
-     * The logger.
-     */
-    private final static Logger logger
-        = Logger.getLogger(OpSetSimpleCapsImpl.class);
+public class OpSetSimpleCapsImpl implements OperationSetSimpleCaps {
+	/**
+	 * The logger.
+	 */
+	private final static Logger logger = Logger.getLogger(OpSetSimpleCapsImpl.class);
 
-    private final XmppProtocolProvider xmppProvider;
+	private final XmppProtocolProvider xmppProvider;
 
-    public OpSetSimpleCapsImpl(XmppProtocolProvider xmppProtocolProvider)
-    {
-        this.xmppProvider = xmppProtocolProvider;
-    }
+	public OpSetSimpleCapsImpl(XmppProtocolProvider xmppProtocolProvider) {
+		this.xmppProvider = xmppProtocolProvider;
+	}
 
-    public Set<Jid> getItems(Jid node)
-    {
-        try
-        {
-            return xmppProvider.discoverItems(node);
-        }
-        catch (XMPPException
-                | InterruptedException
-                | NoResponseException
-                | NotConnectedException e)
-        {
-            logger.error(
-                "Error while discovering the services of " + node
-                        + " , error msg: " + e.getMessage());
+	@Override
+	public Set<Jid> getItems(Jid node) {
+		try {
+			return xmppProvider.discoverItems(node);
+		} catch (XMPPException | InterruptedException | NoResponseException | NotConnectedException e) {
+			logger.error("Error while discovering the services of " + node + " , error msg: " + e.getMessage());
 
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 
-    @Override
-    public boolean hasFeatureSupport(Jid node, String[] features)
-    {
-        List<String> itemFeatures = getFeatures(node);
+	@Override
+	public boolean hasFeatureSupport(Jid node, String[] features) {
+		List<String> itemFeatures = getFeatures(node);
 
-        return itemFeatures != null &&
-            DiscoveryUtil.checkFeatureSupport(features, itemFeatures);
+		return itemFeatures != null && DiscoveryUtil.checkFeatureSupport(features, itemFeatures);
 
-    }
-    
-    public List<String> getFeatures(Jid node)
-    {
-        return xmppProvider.getEntityFeatures(node);
-    }
+	}
 
-    //@Override
-    public boolean hasFeatureSupport(Jid node, String subnode,
-                                     String[] features)
-    {
-        return xmppProvider.checkFeatureSupport(node, subnode, features);
-    }
+	@Override
+	public List<String> getFeatures(Jid node) {
+		return xmppProvider.getEntityFeatures(node);
+	}
+
+	// @Override
+	public boolean hasFeatureSupport(Jid node, String subnode, String[] features) {
+		return xmppProvider.checkFeatureSupport(node, subnode, features);
+	}
 }

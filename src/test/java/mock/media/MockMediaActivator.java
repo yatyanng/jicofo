@@ -17,31 +17,26 @@
  */
 package mock.media;
 
-import org.jitsi.service.neomedia.*;
-import org.osgi.framework.*;
+import org.jitsi.service.neomedia.MediaService;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  *
  */
-public class MockMediaActivator
-    implements BundleActivator
-{
-    private ServiceRegistration<MediaService> msRegistration;
+public class MockMediaActivator implements BundleActivator {
+	private ServiceRegistration<MediaService> msRegistration;
 
-    @Override
-    public void start(BundleContext context)
-        throws Exception
-    {
-        MockMediaService mediaService = new MockMediaService();
+	@Override
+	public void start(BundleContext context) throws Exception {
+		MockMediaService mediaService = new MockMediaService();
 
-        this.msRegistration
-            = context.registerService(MediaService.class, mediaService, null);
-    }
+		this.msRegistration = context.registerService(MediaService.class, mediaService, null);
+	}
 
-    @Override
-    public void stop(BundleContext context)
-        throws Exception
-    {
-        msRegistration.unregister();
-    }
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		msRegistration.unregister();
+	}
 }

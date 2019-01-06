@@ -17,9 +17,12 @@
  */
 package org.jitsi.protocol.xmpp.util;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
+import java.util.Objects;
 
-import java.util.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.CandidatePacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.DtlsFingerprintPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.IceUdpTransportPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.RtcpmuxPacketExtension;
 
 /**
  * Class contains utilities specific to transport signaling in Jitsi Meet
@@ -27,55 +30,44 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class TransportSignaling
-{
-    /**
-     * Merges source transport into destination by copying information
-     * important for Jitsi Meet transport signaling.
-     * @param dst destination <tt>IceUdpTransportPacketExtension</tt>
-     * @param src source <tt>IceUdpTransportPacketExtension</tt> from which
-     *               all relevant information will be merged into <tt>dst</tt>
-     */
-    static public void mergeTransportExtension(
-            IceUdpTransportPacketExtension    dst,
-            IceUdpTransportPacketExtension    src)
-    {
-        Objects.requireNonNull(dst, "dst");
-        Objects.requireNonNull(src, "src");
+public class TransportSignaling {
+	/**
+	 * Merges source transport into destination by copying information important for
+	 * Jitsi Meet transport signaling.
+	 * 
+	 * @param dst destination <tt>IceUdpTransportPacketExtension</tt>
+	 * @param src source <tt>IceUdpTransportPacketExtension</tt> from which all
+	 *            relevant information will be merged into <tt>dst</tt>
+	 */
+	static public void mergeTransportExtension(IceUdpTransportPacketExtension dst, IceUdpTransportPacketExtension src) {
+		Objects.requireNonNull(dst, "dst");
+		Objects.requireNonNull(src, "src");
 
-        // Attributes
-        for (String attribute : src.getAttributeNames())
-        {
-            dst.setAttribute(attribute, src.getAttribute(attribute));
-        }
+		// Attributes
+		for (String attribute : src.getAttributeNames()) {
+			dst.setAttribute(attribute, src.getAttribute(attribute));
+		}
 
-        // RTCP-MUX
-        if (src.isRtcpMux() && !dst.isRtcpMux())
-        {
-            dst.addChildExtension(new RtcpmuxPacketExtension());
-        }
+		// RTCP-MUX
+		if (src.isRtcpMux() && !dst.isRtcpMux()) {
+			dst.addChildExtension(new RtcpmuxPacketExtension());
+		}
 
-        // Candidates
-        for (CandidatePacketExtension c : src.getCandidateList())
-        {
-            dst.addCandidate(c);
-        }
+		// Candidates
+		for (CandidatePacketExtension c : src.getCandidateList()) {
+			dst.addCandidate(c);
+		}
 
-        // DTLS fingerprint
-        DtlsFingerprintPacketExtension srcDtls
-            = src.getFirstChildOfType(DtlsFingerprintPacketExtension.class);
-        if (srcDtls != null)
-        {
-            // Remove the current one if any
-            DtlsFingerprintPacketExtension dstDtls
-                = dst.getFirstChildOfType(
-                        DtlsFingerprintPacketExtension.class);
-            if (dstDtls != null)
-            {
-                dst.removeChildExtension(dstDtls);
-            }
-            // Set the fingerprint from the source
-            dst.addChildExtension(srcDtls);
-        }
-    }
+		// DTLS fingerprint
+		DtlsFingerprintPacketExtension srcDtls = src.getFirstChildOfType(DtlsFingerprintPacketExtension.class);
+		if (srcDtls != null) {
+			// Remove the current one if any
+			DtlsFingerprintPacketExtension dstDtls = dst.getFirstChildOfType(DtlsFingerprintPacketExtension.class);
+			if (dstDtls != null) {
+				dst.removeChildExtension(dstDtls);
+			}
+			// Set the fingerprint from the source
+			dst.addChildExtension(srcDtls);
+		}
+	}
 }

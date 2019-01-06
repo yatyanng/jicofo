@@ -17,57 +17,51 @@
  */
 package org.jitsi.jicofo;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import org.jitsi.protocol.xmpp.util.*;
+import java.util.Arrays;
 
-import java.util.*;
+import org.jitsi.protocol.xmpp.util.SourceGroup;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.SourcePacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.ParameterPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.SourceGroupPacketExtension;
 
 /**
  * Utility methods for creating SSRCs and SSRC groups.
  *
  * @author Pawel Domas
  */
-public class SourceUtil
-{
-    static public SourcePacketExtension createSourceWithSsrc(long ssrc, String[][] params)
-    {
-        SourcePacketExtension ssrcPE = new SourcePacketExtension();
+public class SourceUtil {
+	static public SourcePacketExtension createSourceWithSsrc(long ssrc, String[][] params) {
+		SourcePacketExtension ssrcPE = new SourcePacketExtension();
 
-        ssrcPE.setSSRC(ssrc);
-        setSourceParams(ssrcPE, params);
+		ssrcPE.setSSRC(ssrc);
+		setSourceParams(ssrcPE, params);
 
-        return ssrcPE;
-    }
+		return ssrcPE;
+	}
 
-    static public SourcePacketExtension createSourceWithRid(String rid, String[][] params)
-    {
-        SourcePacketExtension ssrcPE = new SourcePacketExtension();
+	static public SourcePacketExtension createSourceWithRid(String rid, String[][] params) {
+		SourcePacketExtension ssrcPE = new SourcePacketExtension();
 
-        ssrcPE.setRid(rid);
-        setSourceParams(ssrcPE, params);
+		ssrcPE.setRid(rid);
+		setSourceParams(ssrcPE, params);
 
-        return ssrcPE;
-    }
+		return ssrcPE;
+	}
 
-    static private void setSourceParams(SourcePacketExtension source, String[][] params)
-    {
-        for (String[] param : params)
-        {
-            source.addParameter(
-                    new ParameterPacketExtension(param[0], param[1]));
-        }
+	static private void setSourceParams(SourcePacketExtension source, String[][] params) {
+		for (String[] param : params) {
+			source.addParameter(new ParameterPacketExtension(param[0], param[1]));
+		}
 
-    }
+	}
 
-    static public SourceGroup createSourceGroup(String                semantics,
-                                                SourcePacketExtension ssrcs[])
-    {
-        SourceGroupPacketExtension groupPe = new SourceGroupPacketExtension();
+	static public SourceGroup createSourceGroup(String semantics, SourcePacketExtension ssrcs[]) {
+		SourceGroupPacketExtension groupPe = new SourceGroupPacketExtension();
 
-        groupPe.setSemantics(semantics);
-        groupPe.addSources(Arrays.asList(ssrcs));
+		groupPe.setSemantics(semantics);
+		groupPe.addSources(Arrays.asList(ssrcs));
 
-        return new SourceGroup(groupPe);
-    }
+		return new SourceGroup(groupPe);
+	}
 }

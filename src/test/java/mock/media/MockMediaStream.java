@@ -17,243 +17,209 @@
  */
 package mock.media;
 
-import org.jitsi.impl.neomedia.*;
-import org.jitsi.impl.neomedia.rtp.*;
-import org.jitsi.impl.neomedia.transform.*;
-import org.jitsi.service.neomedia.*;
-import org.jitsi.service.neomedia.device.*;
-import org.jitsi.service.neomedia.format.*;
-import org.jitsi.service.neomedia.rtp.*;
-import org.jitsi.service.neomedia.stats.*;
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.net.*;
-import java.util.*;
+import org.jitsi.impl.neomedia.rtp.StreamRTPManager;
+import org.jitsi.impl.neomedia.transform.TransformEngine;
+import org.jitsi.service.neomedia.AbstractMediaStream;
+import org.jitsi.service.neomedia.MediaDirection;
+import org.jitsi.service.neomedia.MediaStreamTarget;
+import org.jitsi.service.neomedia.RTPExtension;
+import org.jitsi.service.neomedia.RTPTranslator;
+import org.jitsi.service.neomedia.RawPacket;
+import org.jitsi.service.neomedia.RetransmissionRequester;
+import org.jitsi.service.neomedia.SSRCFactory;
+import org.jitsi.service.neomedia.SrtpControl;
+import org.jitsi.service.neomedia.StreamConnector;
+import org.jitsi.service.neomedia.device.MediaDevice;
+import org.jitsi.service.neomedia.format.MediaFormat;
+import org.jitsi.service.neomedia.stats.MediaStreamStats2;
 
 /**
  *
  * @author Pawel Domas
  * @author Lyubomir Marinov
  */
-public class MockMediaStream
-    extends AbstractMediaStream
-{
-    private MockMediaStreamStats streamStats = new MockMediaStreamStats();
+public class MockMediaStream extends AbstractMediaStream {
+	private MockMediaStreamStats streamStats = new MockMediaStreamStats();
 
-    @Override
-    public void addDynamicRTPPayloadType(byte rtpPayloadType,
-                                         MediaFormat format)
-    {
-    }
+	@Override
+	public void addDynamicRTPPayloadType(byte rtpPayloadType, MediaFormat format) {
+	}
 
-    @Override
-    public void addDynamicRTPPayloadTypeOverride(byte originalPt,
-                                                 byte overloadPt)
-    {
-    }
+	@Override
+	public void addDynamicRTPPayloadTypeOverride(byte originalPt, byte overloadPt) {
+	}
 
-    @Override
-    public void addRTPExtension(byte extensionID, RTPExtension rtpExtension)
-    {
-    }
+	@Override
+	public void addRTPExtension(byte extensionID, RTPExtension rtpExtension) {
+	}
 
-    @Override
-    public void clearRTPExtensions()
-    {
-    }
+	@Override
+	public void clearRTPExtensions() {
+	}
 
-    @Override
-    public void clearDynamicRTPPayloadTypes()
-    {
-    }
+	@Override
+	public void clearDynamicRTPPayloadTypes() {
+	}
 
-    @Override
-    public void close()
-    {
-    }
+	@Override
+	public void close() {
+	}
 
-    @Override
-    public RetransmissionRequester getRetransmissionRequester()
-    {
-        return null;
-    }
+	@Override
+	public RetransmissionRequester getRetransmissionRequester() {
+		return null;
+	}
 
-    @Override
-    public Map<Byte, RTPExtension> getActiveRTPExtensions()
-    {
-        return null;
-    }
+	@Override
+	public Map<Byte, RTPExtension> getActiveRTPExtensions() {
+		return null;
+	}
 
-    @Override
-    public MediaDevice getDevice()
-    {
-        return null;
-    }
+	@Override
+	public MediaDevice getDevice() {
+		return null;
+	}
 
-    @Override
-    public MediaDirection getDirection()
-    {
-        return null;
-    }
+	@Override
+	public MediaDirection getDirection() {
+		return null;
+	}
 
-    @Override
-    public Map<Byte, MediaFormat> getDynamicRTPPayloadTypes()
-    {
-        return new HashMap<>();
-    }
+	@Override
+	public Map<Byte, MediaFormat> getDynamicRTPPayloadTypes() {
+		return new HashMap<>();
+	}
 
-    @Override
-    public MediaFormat getFormat()
-    {
-        return null;
-    }
+	@Override
+	public MediaFormat getFormat() {
+		return null;
+	}
 
-    @Override
-    public long getLocalSourceID()
-    {
-        return 0;
-    }
+	@Override
+	public long getLocalSourceID() {
+		return 0;
+	}
 
-    @Override
-    public MediaStreamStats2 getMediaStreamStats()
-    {
-        return streamStats;
-    }
+	@Override
+	public MediaStreamStats2 getMediaStreamStats() {
+		return streamStats;
+	}
 
-    @Override
-    public InetSocketAddress getRemoteControlAddress()
-    {
-        return null;
-    }
+	@Override
+	public InetSocketAddress getRemoteControlAddress() {
+		return null;
+	}
 
-    @Override
-    public InetSocketAddress getRemoteDataAddress()
-    {
-        return null;
-    }
+	@Override
+	public InetSocketAddress getRemoteDataAddress() {
+		return null;
+	}
 
-    @Override
-    public long getRemoteSourceID()
-    {
-        return 0;
-    }
+	@Override
+	public long getRemoteSourceID() {
+		return 0;
+	}
 
-    @Override
-    public List<Long> getRemoteSourceIDs()
-    {
-        return null;
-    }
+	@Override
+	public List<Long> getRemoteSourceIDs() {
+		return null;
+	}
 
-    @Override
-    public SrtpControl getSrtpControl()
-    {
-        return null;
-    }
+	@Override
+	public SrtpControl getSrtpControl() {
+		return null;
+	}
 
-    @Override
-    public StreamRTPManager getStreamRTPManager()
-    {
-        return null;
-    }
+	@Override
+	public StreamRTPManager getStreamRTPManager() {
+		return null;
+	}
 
-    @Override
-    public MediaStreamTarget getTarget()
-    {
-        return null;
-    }
+	@Override
+	public MediaStreamTarget getTarget() {
+		return null;
+	}
 
-    @Override
-    public StreamConnector.Protocol getTransportProtocol()
-    {
-        return null;
-    }
+	@Override
+	public StreamConnector.Protocol getTransportProtocol() {
+		return null;
+	}
 
-    @Override
-    public void injectPacket(RawPacket pkt, boolean data, TransformEngine after)
-    {
-    }
+	@Override
+	public void injectPacket(RawPacket pkt, boolean data, TransformEngine after) {
+	}
 
-    @Override
-    public boolean isKeyFrame(RawPacket pkt)
-    {
-        return false;
-    }
+	@Override
+	public boolean isKeyFrame(RawPacket pkt) {
+		return false;
+	}
 
-    @Override
-    public boolean isKeyFrame(byte[] buf, int off, int len)
-    {
-        // TODO move to AbstractMediaStream.
-        return false;
-    }
+	@Override
+	public boolean isKeyFrame(byte[] buf, int off, int len) {
+		// TODO move to AbstractMediaStream.
+		return false;
+	}
 
-    @Override
-    public boolean isMute()
-    {
-        return false;
-    }
+	@Override
+	public boolean isMute() {
+		return false;
+	}
 
-    @Override
-    public boolean isStarted()
-    {
-        return false;
-    }
+	@Override
+	public boolean isStarted() {
+		return false;
+	}
 
-    @Override
-    public void removeReceiveStreamForSsrc(long ssrc)
-    {
-    }
+	@Override
+	public void removeReceiveStreamForSsrc(long ssrc) {
+	}
 
-    @Override
-    public void setConnector(StreamConnector connector)
-    {
-    }
+	@Override
+	public void setConnector(StreamConnector connector) {
+	}
 
-    @Override
-    public void setDevice(MediaDevice device)
-    {
-    }
+	@Override
+	public void setDevice(MediaDevice device) {
+	}
 
-    @Override
-    public void setDirection(MediaDirection direction)
-    {
-    }
+	@Override
+	public void setDirection(MediaDirection direction) {
+	}
 
-    @Override
-    public void setExternalTransformer(TransformEngine transformEngine)
-    {
-    }
+	@Override
+	public void setExternalTransformer(TransformEngine transformEngine) {
+	}
 
-    @Override
-    public void setFormat(MediaFormat format)
-    {
-    }
+	@Override
+	public void setFormat(MediaFormat format) {
+	}
 
-    @Override
-    public void setMute(boolean mute)
-    {
-    }
+	@Override
+	public void setMute(boolean mute) {
+	}
 
-    @Override
-    public void setRTPTranslator(RTPTranslator rtpTranslator)
-    {
-    }
+	@Override
+	public void setRTPTranslator(RTPTranslator rtpTranslator) {
+	}
 
-    @Override
-    public void setSSRCFactory(SSRCFactory ssrcFactory)
-    {
-    }
+	@Override
+	public void setSSRCFactory(SSRCFactory ssrcFactory) {
+	}
 
-    @Override
-    public void setTarget(MediaStreamTarget target)
-    {
-    }
+	@Override
+	public void setTarget(MediaStreamTarget target) {
+	}
 
-    @Override
-    public void start()
-    {
-    }
+	@Override
+	public void start() {
+	}
 
-    @Override
-    public void stop()
-    {
-    }
+	@Override
+	public void stop() {
+	}
 }

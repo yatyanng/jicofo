@@ -17,110 +17,90 @@
  */
 package mock.xmpp;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import org.jitsi.protocol.xmpp.*;
-import org.jivesoftware.smack.iqrequest.*;
-import org.jivesoftware.smack.packet.*;
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-import org.jxmpp.stringprep.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+import org.jitsi.protocol.xmpp.XmppConnection;
+import org.jivesoftware.smack.iqrequest.IQRequestHandler;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XMPPError;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
 
-public class XmppPeer
-    implements IQRequestHandler
-{
-    private final XmppConnection connection;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQ;
 
-    private final List<IQ> iqs = new ArrayList<>();
+public class XmppPeer implements IQRequestHandler {
+	private final XmppConnection connection;
 
-    public XmppPeer(String jid)
-    {
-        this(jidCreate(jid), new MockXmppConnection(jidCreate(jid)));
-    }
+	private final List<IQ> iqs = new ArrayList<>();
 
-    private static Jid jidCreate(String jid)
-    {
-        try
-        {
-            return JidCreate.from(jid);
-        }
-        catch (XmppStringprepException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+	public XmppPeer(String jid) {
+		this(jidCreate(jid), new MockXmppConnection(jidCreate(jid)));
+	}
 
-    public XmppPeer(Jid jid, XmppConnection connection)
-    {
-        this.connection = connection;
-    }
+	private static Jid jidCreate(String jid) {
+		try {
+			return JidCreate.from(jid);
+		} catch (XmppStringprepException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public XmppConnection getConnection()
-    {
-        return connection;
-    }
+	public XmppPeer(Jid jid, XmppConnection connection) {
+		this.connection = connection;
+	}
 
-    public void start()
-    {
-        this.connection.registerIQRequestHandler(this);
-    }
+	public XmppConnection getConnection() {
+		return connection;
+	}
 
-    public void stop()
-    {
-        this.connection.unregisterIQRequestHandler(this);
-    }
+	public void start() {
+		this.connection.registerIQRequestHandler(this);
+	}
 
-    public int getIqCount()
-    {
-        synchronized (iqs)
-        {
-            return iqs.size();
-        }
-    }
+	public void stop() {
+		this.connection.unregisterIQRequestHandler(this);
+	}
 
-    public IQ getIq(int idx)
-    {
-        synchronized (iqs)
-        {
-            return iqs.get(idx);
-        }
-    }
+	public int getIqCount() {
+		synchronized (iqs) {
+			return iqs.size();
+		}
+	}
 
-    @Override
-    public IQ handleIQRequest(IQ iqRequest)
-    {
-        synchronized (iqs)
-        {
-            iqs.add(iqRequest);
-        }
+	public IQ getIq(int idx) {
+		synchronized (iqs) {
+			return iqs.get(idx);
+		}
+	}
 
-        return IQ.createErrorResponse(
-                iqRequest,
-                XMPPError.Condition.feature_not_implemented);
-    }
+	@Override
+	public IQ handleIQRequest(IQ iqRequest) {
+		synchronized (iqs) {
+			iqs.add(iqRequest);
+		}
 
-    @Override
-    public Mode getMode()
-    {
-        return Mode.sync;
-    }
+		return IQ.createErrorResponse(iqRequest, XMPPError.Condition.feature_not_implemented);
+	}
 
-    @Override
-    public IQ.Type getType()
-    {
-        return IQ.Type.get;
-    }
+	@Override
+	public Mode getMode() {
+		return Mode.sync;
+	}
 
-    @Override
-    public String getElement()
-    {
-        return JingleIQ.ELEMENT_NAME;
-    }
+	@Override
+	public IQ.Type getType() {
+		return IQ.Type.get;
+	}
 
-    @Override
-    public String getNamespace()
-    {
-        return JingleIQ.NAMESPACE;
-    }
+	@Override
+	public String getElement() {
+		return JingleIQ.ELEMENT_NAME;
+	}
+
+	@Override
+	public String getNamespace() {
+		return JingleIQ.NAMESPACE;
+	}
 }

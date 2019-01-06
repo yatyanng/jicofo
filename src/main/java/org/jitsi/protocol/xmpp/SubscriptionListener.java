@@ -17,7 +17,7 @@
  */
 package org.jitsi.protocol.xmpp;
 
-import org.jivesoftware.smack.packet.*;
+import org.jivesoftware.smack.packet.ExtensionElement;
 
 /**
  * Class used to listen for subscription updates through
@@ -25,15 +25,13 @@ import org.jivesoftware.smack.packet.*;
  *
  * @author Pawel Domas
  */
-public interface SubscriptionListener
-{
-    /**
-     * Callback called when update is received on some subscription node.
-     *  @param node the source node of the event.
-     * @param itemId the ID of PubSub item for which this event was generated.
-     * @param payload the payload of notification.
-     */
-    void onSubscriptionUpdate(String           node,
-                              String           itemId,
-                              ExtensionElement payload);
+public interface SubscriptionListener {
+	/**
+	 * Callback called when update is received on some subscription node.
+	 * 
+	 * @param node    the source node of the event.
+	 * @param itemId  the ID of PubSub item for which this event was generated.
+	 * @param payload the payload of notification.
+	 */
+	void onSubscriptionUpdate(String node, String itemId, ExtensionElement payload);
 }

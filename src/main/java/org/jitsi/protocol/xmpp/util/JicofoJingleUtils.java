@@ -17,54 +17,50 @@
  */
 package org.jitsi.protocol.xmpp.util;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.*;
-import org.jitsi.impl.protocol.xmpp.extensions.*;
+import org.jitsi.impl.protocol.xmpp.extensions.StartMutedPacketExtension;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.ContentPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.GroupPacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQ;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.BundlePacketExtension;
 
 /**
  * Jicofo specific utilities for Jingle.
  *
  * @author Boris Grozev
  */
-public class JicofoJingleUtils
-{
-    /**
-     * Adds a group packet extension to a {@link JingleIQ}, and a
-     * {@link BundlePacketExtension} to each of its contents. I.e. adds
-     * everything that we deem necessary to enable {@code bundle} in an offer.
-     * It is unclear how much of this is actually necessary for
-     * {@code jitsi-meet}.
-     *
-     * @param jingleIQ the IQ to add extensions to.
-     */
-    public static void addBundleExtensions(JingleIQ jingleIQ)
-    {
-        GroupPacketExtension group
-            = GroupPacketExtension.createBundleGroup(jingleIQ.getContentList());
+public class JicofoJingleUtils {
+	/**
+	 * Adds a group packet extension to a {@link JingleIQ}, and a
+	 * {@link BundlePacketExtension} to each of its contents. I.e. adds everything
+	 * that we deem necessary to enable {@code bundle} in an offer. It is unclear
+	 * how much of this is actually necessary for {@code jitsi-meet}.
+	 *
+	 * @param jingleIQ the IQ to add extensions to.
+	 */
+	public static void addBundleExtensions(JingleIQ jingleIQ) {
+		GroupPacketExtension group = GroupPacketExtension.createBundleGroup(jingleIQ.getContentList());
 
-        jingleIQ.addExtension(group);
+		jingleIQ.addExtension(group);
 
-        for (ContentPacketExtension content : jingleIQ.getContentList())
-        {
-            // FIXME: is it mandatory ?
-            // http://estos.de/ns/bundle
-            content.addChildExtension(new BundlePacketExtension());
-        }
-    }
+		for (ContentPacketExtension content : jingleIQ.getContentList()) {
+			// FIXME: is it mandatory ?
+			// http://estos.de/ns/bundle
+			content.addChildExtension(new BundlePacketExtension());
+		}
+	}
 
-    /**
-     * Adds a {@link StartMutedPacketExtension} to a specific {@link JingleIQ}.
-     * @param jingleIQ the {@link JingleIQ} to add extensions to.
-     * @param audioMute the value to set for the {@code audio} attribute.
-     * @param videoMute the value to set for the {@code video} attribute.
-     */
-    public static void addStartMutedExtension(
-        JingleIQ jingleIQ, boolean audioMute, boolean videoMute)
-    {
-        StartMutedPacketExtension startMutedExt
-            = new StartMutedPacketExtension();
-        startMutedExt.setAudioMute(audioMute);
-        startMutedExt.setVideoMute(videoMute);
-        jingleIQ.addExtension(startMutedExt);
-    }
+	/**
+	 * Adds a {@link StartMutedPacketExtension} to a specific {@link JingleIQ}.
+	 * 
+	 * @param jingleIQ  the {@link JingleIQ} to add extensions to.
+	 * @param audioMute the value to set for the {@code audio} attribute.
+	 * @param videoMute the value to set for the {@code video} attribute.
+	 */
+	public static void addStartMutedExtension(JingleIQ jingleIQ, boolean audioMute, boolean videoMute) {
+		StartMutedPacketExtension startMutedExt = new StartMutedPacketExtension();
+		startMutedExt.setAudioMute(audioMute);
+		startMutedExt.setVideoMute(videoMute);
+		jingleIQ.addExtension(startMutedExt);
+	}
 }

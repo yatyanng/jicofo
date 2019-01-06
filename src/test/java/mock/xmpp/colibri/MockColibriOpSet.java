@@ -17,47 +17,40 @@
  */
 package mock.xmpp.colibri;
 
-import mock.*;
+import org.jitsi.eventadmin.EventAdmin;
+import org.jitsi.impl.protocol.xmpp.colibri.OperationSetColibriConferenceImpl;
+import org.jitsi.protocol.xmpp.colibri.ColibriConference;
+import org.jitsi.protocol.xmpp.colibri.OperationSetColibriConference;
 
-import org.jitsi.eventadmin.*;
-import org.jitsi.impl.protocol.xmpp.colibri.*;
-import org.jitsi.protocol.xmpp.colibri.*;
+import mock.MockProtocolProvider;
 
 /**
  *
  * @author Pawel Domas
  */
-public class MockColibriOpSet
-    implements OperationSetColibriConference
-{
-    private final MockProtocolProvider protocolProvider;
+public class MockColibriOpSet implements OperationSetColibriConference {
+	private final MockProtocolProvider protocolProvider;
 
-    private final EventAdmin eventAdmin;
+	private final EventAdmin eventAdmin;
 
-    private OperationSetColibriConferenceImpl colibriImpl;
+	private OperationSetColibriConferenceImpl colibriImpl;
 
-    public MockColibriOpSet(MockProtocolProvider protocolProvider,
-                            EventAdmin           eventAdmin)
-    {
-        this.protocolProvider = protocolProvider;
+	public MockColibriOpSet(MockProtocolProvider protocolProvider, EventAdmin eventAdmin) {
+		this.protocolProvider = protocolProvider;
 
-        colibriImpl = new OperationSetColibriConferenceImpl();
+		colibriImpl = new OperationSetColibriConferenceImpl();
 
-        this.eventAdmin = eventAdmin;
+		this.eventAdmin = eventAdmin;
 
-        colibriImpl.initialize(
-            protocolProvider.getXmppConnection(), eventAdmin);
-    }
+		colibriImpl.initialize(protocolProvider.getXmppConnection(), eventAdmin);
+	}
 
-    public AllocThreadingTestColibriConference createAllocThreadingConf()
-    {
-        return new AllocThreadingTestColibriConference(
-            protocolProvider.getXmppConnection(), eventAdmin);
-    }
+	public AllocThreadingTestColibriConference createAllocThreadingConf() {
+		return new AllocThreadingTestColibriConference(protocolProvider.getXmppConnection(), eventAdmin);
+	}
 
-    @Override
-    public ColibriConference createNewConference()
-    {
-        return colibriImpl.createNewConference();
-    }
+	@Override
+	public ColibriConference createNewConference() {
+		return colibriImpl.createNewConference();
+	}
 }

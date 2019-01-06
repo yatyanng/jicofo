@@ -17,89 +17,82 @@
  */
 package org.jitsi.jicofo.recording.jibri;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.*;
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.event.*;
-import org.jitsi.impl.protocol.xmpp.*;
-import org.jivesoftware.smack.iqrequest.*;
-import org.jivesoftware.smack.packet.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-import java.util.*;
+import org.jitsi.impl.protocol.xmpp.XmppProtocolProvider;
+import org.jivesoftware.smack.iqrequest.AbstractIqRequestHandler;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.XMPPError;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.JibriIq;
+import net.java.sip.communicator.service.protocol.OperationSet;
+import net.java.sip.communicator.service.protocol.RegistrationState;
+import net.java.sip.communicator.service.protocol.event.RegistrationStateChangeEvent;
+import net.java.sip.communicator.service.protocol.event.RegistrationStateChangeListener;
 
 /**
- * This operation is basically just an IQ handler for {@link JibriIq}s.
- * However, all conferences register here so that they can get a hold of
- * the incoming Jibri IQs and process them.
+ * This operation is basically just an IQ handler for {@link JibriIq}s. However,
+ * all conferences register here so that they can get a hold of the incoming
+ * Jibri IQs and process them.
  */
-public class OperationSetJibri
-    extends AbstractIqRequestHandler
-    implements OperationSet, RegistrationStateChangeListener
-{
-    private final List<CommonJibriStuff> jibris = Collections.synchronizedList(
-        new LinkedList<CommonJibriStuff>());
+public class OperationSetJibri extends AbstractIqRequestHandler
+		implements OperationSet, RegistrationStateChangeListener {
+	private final List<CommonJibriStuff> jibris = Collections.synchronizedList(new LinkedList<CommonJibriStuff>());
 
-    private final XmppProtocolProvider protocolProvider;
+	private final XmppProtocolProvider protocolProvider;
 
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param protocolProvider the XMPP to which this instance is bound.
-     */
-    public OperationSetJibri(XmppProtocolProvider protocolProvider)
-    {
-        super(JibriIq.ELEMENT_NAME, JibriIq.NAMESPACE, IQ.Type.set, Mode.async);
-        this.protocolProvider = protocolProvider;
-        protocolProvider.addRegistrationStateChangeListener(this);
-    }
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param protocolProvider the XMPP to which this instance is bound.
+	 */
+	public OperationSetJibri(XmppProtocolProvider protocolProvider) {
+		super(JibriIq.ELEMENT_NAME, JibriIq.NAMESPACE, IQ.Type.set, Mode.async);
+		this.protocolProvider = protocolProvider;
+		protocolProvider.addRegistrationStateChangeListener(this);
+	}
 
-    /**
-     * Register a Jibri instance for IQ processing.
-     *
-     * @param jibri The Jibri instance that is interested in {@link JibriIq}s.
-     */
-    public void addJibri(CommonJibriStuff jibri)
-    {
-        jibris.add(jibri);
-    }
+	/**
+	 * Register a Jibri instance for IQ processing.
+	 *
+	 * @param jibri The Jibri instance that is interested in {@link JibriIq}s.
+	 */
+	public void addJibri(CommonJibriStuff jibri) {
+		jibris.add(jibri);
+	}
 
-    /**
-     * Removes a Jibri handler from receiving IQs.
-     *
-     * @param jibri the Jibri handler to remove.
-     */
-    public void removeJibri(CommonJibriStuff jibri)
-    {
-        jibris.remove(jibri);
-    }
+	/**
+	 * Removes a Jibri handler from receiving IQs.
+	 *
+	 * @param jibri the Jibri handler to remove.
+	 */
+	public void removeJibri(CommonJibriStuff jibri) {
+		jibris.remove(jibri);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IQ handleIQRequest(IQ iq)
-    {
-        synchronized (jibris)
-        {
-            for (CommonJibriStuff jibri : jibris)
-            {
-                if (jibri.accept((JibriIq) iq))
-                {
-                    return jibri.handleIQRequest((JibriIq) iq);
-                }
-            }
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IQ handleIQRequest(IQ iq) {
+		synchronized (jibris) {
+			for (CommonJibriStuff jibri : jibris) {
+				if (jibri.accept((JibriIq) iq)) {
+					return jibri.handleIQRequest((JibriIq) iq);
+				}
+			}
+		}
 
-        return IQ.createErrorResponse(iq, XMPPError.getBuilder(
-            XMPPError.Condition.item_not_found));
-    }
+		return IQ.createErrorResponse(iq, XMPPError.getBuilder(XMPPError.Condition.item_not_found));
+	}
 
-    @Override
-    public void registrationStateChanged(RegistrationStateChangeEvent evt)
-    {
-        // Do initializations which require valid connection
-        if (RegistrationState.REGISTERED.equals(evt.getNewState()))
-        {
-            protocolProvider.getConnection().registerIQRequestHandler(this);
-        }
-    }
+	@Override
+	public void registrationStateChanged(RegistrationStateChangeEvent evt) {
+		// Do initializations which require valid connection
+		if (RegistrationState.REGISTERED.equals(evt.getNewState())) {
+			protocolProvider.getConnection().registerIQRequestHandler(this);
+		}
+	}
 }

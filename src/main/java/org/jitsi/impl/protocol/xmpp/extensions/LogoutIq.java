@@ -17,11 +17,12 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-import org.jitsi.util.*;
-import org.jivesoftware.smack.packet.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
-import java.io.*;
-import java.net.*;
+import org.jitsi.util.StringUtils;
+import org.jivesoftware.smack.packet.IQ;
 
 /**
  * The IQ send by the clients to the focus component in order to destroy
@@ -29,110 +30,95 @@ import java.net.*;
  *
  * @author Pawel Domas
  */
-public class LogoutIq
-    extends IQ
-{
-    /**
-     * XML element name of logout IQ.
-     */
-    public static final String ELEMENT_NAME = "logout";
+public class LogoutIq extends IQ {
+	/**
+	 * XML element name of logout IQ.
+	 */
+	public static final String ELEMENT_NAME = "logout";
 
-    /**
-     * XML namespace of logout IQ.
-     */
-    public static final String NAMESPACE = ConferenceIq.NAMESPACE;
+	/**
+	 * XML namespace of logout IQ.
+	 */
+	public static final String NAMESPACE = ConferenceIq.NAMESPACE;
 
-    /**
-     * The name of the attribute which holds the ID of authentication session.
-     */
-    public static final String SESSION_ID_ATTR = "session-id";
+	/**
+	 * The name of the attribute which holds the ID of authentication session.
+	 */
+	public static final String SESSION_ID_ATTR = "session-id";
 
-    /**
-     * The name of the attribute which holds the URL which should be visited
-     * to complete the logout process.
-     */
-    public static final String LOGOUT_URL_ATTR = "logout-url";
+	/**
+	 * The name of the attribute which holds the URL which should be visited to
+	 * complete the logout process.
+	 */
+	public static final String LOGOUT_URL_ATTR = "logout-url";
 
-    /**
-     * Authentication session ID.
-     */
-    private String sessionId;
+	/**
+	 * Authentication session ID.
+	 */
+	private String sessionId;
 
-    /**
-     * The URL which should be visited by the user in order to complete the
-     * logout process(optional).
-     */
-    private String logoutUrl;
+	/**
+	 * The URL which should be visited by the user in order to complete the logout
+	 * process(optional).
+	 */
+	private String logoutUrl;
 
-    /**
-     * Creates new instance of <tt>LogoutIq</tt>.
-     */
-    public LogoutIq()
-    {
-        super(ELEMENT_NAME, NAMESPACE);
-    }
+	/**
+	 * Creates new instance of <tt>LogoutIq</tt>.
+	 */
+	public LogoutIq() {
+		super(ELEMENT_NAME, NAMESPACE);
+	}
 
-    /**
-     * Returns the value of authentication session ID attribute.
-     */
-    public String getSessionId()
-    {
-        return sessionId;
-    }
+	/**
+	 * Returns the value of authentication session ID attribute.
+	 */
+	public String getSessionId() {
+		return sessionId;
+	}
 
-    /**
-     * Sets the value of authentication session ID attribute.
-     * @param sessionId the value which will be stored in session ID attribute.
-     */
-    public void setSessionId(String sessionId)
-    {
-        this.sessionId = sessionId;
-    }
+	/**
+	 * Sets the value of authentication session ID attribute.
+	 * 
+	 * @param sessionId the value which will be stored in session ID attribute.
+	 */
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
 
-    @Override
-    protected IQChildElementXmlStringBuilder getIQChildElementBuilder(
-            IQChildElementXmlStringBuilder xml)
-    {
-        xml.optAttribute(SESSION_ID_ATTR, sessionId);
-        if (!StringUtils.isNullOrEmpty(logoutUrl))
-        {
-            try
-            {
-                String encodedUrl = URLEncoder.encode(logoutUrl, "UTF-8");
-                xml.attribute(LOGOUT_URL_ATTR, encodedUrl);
-            }
-            catch (UnsupportedEncodingException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-        xml.setEmptyElement();
-        return xml;
-    }
+	@Override
+	protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+		xml.optAttribute(SESSION_ID_ATTR, sessionId);
+		if (!StringUtils.isNullOrEmpty(logoutUrl)) {
+			try {
+				String encodedUrl = URLEncoder.encode(logoutUrl, "UTF-8");
+				xml.attribute(LOGOUT_URL_ATTR, encodedUrl);
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		xml.setEmptyElement();
+		return xml;
+	}
 
-    /**
-     * Returns the value of logout URL attribute(optional).
-     */
-    public String getLogoutUrl()
-    {
-        return logoutUrl;
-    }
+	/**
+	 * Returns the value of logout URL attribute(optional).
+	 */
+	public String getLogoutUrl() {
+		return logoutUrl;
+	}
 
-    /**
-     * Sets the value of logout URL attribute carried by this IQ(optional).
-     * @param logoutUrl the URL which should be visited by the user in order
-     *                  to complete the logout process.
-     */
-    public void setLogoutUrl(String logoutUrl)
-    {
-        try
-        {
-            this.logoutUrl = logoutUrl != null
-                    ? URLDecoder.decode(logoutUrl,"UTF-8") : null;
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * Sets the value of logout URL attribute carried by this IQ(optional).
+	 * 
+	 * @param logoutUrl the URL which should be visited by the user in order to
+	 *                  complete the logout process.
+	 */
+	public void setLogoutUrl(String logoutUrl) {
+		try {
+			this.logoutUrl = logoutUrl != null ? URLDecoder.decode(logoutUrl, "UTF-8") : null;
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

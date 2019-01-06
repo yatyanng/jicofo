@@ -17,71 +17,67 @@
  */
 package org.jitsi.jicofo;
 
-import mock.xmpp.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
-import org.jivesoftware.smack.packet.*;
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.jxmpp.jid.impl.*;
-import org.jxmpp.stringprep.*;
-
 import static org.junit.Assert.assertEquals;
 
+import org.jivesoftware.smack.packet.IQ;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.stringprep.XmppStringprepException;
+
+import mock.xmpp.XmppPeer;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleAction;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.JingleIQ;
+
 @RunWith(JUnit4.class)
-public class ConnectionMockTest
-{
-    private XmppPeer peerA;
-    private XmppPeer peerB;
-    private XmppPeer peerC;
+public class ConnectionMockTest {
+	private XmppPeer peerA;
+	private XmppPeer peerB;
+	private XmppPeer peerC;
 
-    @Before
-    public void setup()
-            throws Exception
-    {
-        peerA = new XmppPeer("A");
-        peerB = new XmppPeer("B");
-        peerC = new XmppPeer("C");
+	@Before
+	public void setup() throws Exception {
+		peerA = new XmppPeer("A");
+		peerB = new XmppPeer("B");
+		peerC = new XmppPeer("C");
 
-        peerA.start();
-        peerB.start();
-        peerC.start();
-    }
+		peerA.start();
+		peerB.start();
+		peerC.start();
+	}
 
-    @After
-    public void tearDown()
-    {
-        peerA.stop();
-        peerB.stop();
-        peerC.stop();
-    }
+	@After
+	public void tearDown() {
+		peerA.stop();
+		peerB.stop();
+		peerC.stop();
+	}
 
-    @Test
-    public void testXmpConnectionIqGet()
-            throws InterruptedException, XmppStringprepException
-    {
-        peerA.getConnection().sendStanza(getIq("B"));
-        peerA.getConnection().sendStanza(getIq("C"));
-        peerB.getConnection().sendStanza(getIq("A"));
+	@Test
+	public void testXmpConnectionIqGet() throws InterruptedException, XmppStringprepException {
+		peerA.getConnection().sendStanza(getIq("B"));
+		peerA.getConnection().sendStanza(getIq("C"));
+		peerB.getConnection().sendStanza(getIq("A"));
 
-        Thread.sleep(500);
+		Thread.sleep(500);
 
-        assertEquals(1, peerA.getIqCount());
-        assertEquals(1, peerB.getIqCount());
-        assertEquals(1, peerC.getIqCount());
+		assertEquals(1, peerA.getIqCount());
+		assertEquals(1, peerB.getIqCount());
+		assertEquals(1, peerC.getIqCount());
 
-        assertEquals("a", peerA.getIq(0).getTo().toString());
-        assertEquals("b", peerB.getIq(0).getTo().toString());
-        assertEquals("c", peerC.getIq(0).getTo().toString());
-    }
+		assertEquals("a", peerA.getIq(0).getTo().toString());
+		assertEquals("b", peerB.getIq(0).getTo().toString());
+		assertEquals("c", peerC.getIq(0).getTo().toString());
+	}
 
-    private JingleIQ getIq(String to)
-            throws XmppStringprepException
-    {
-        JingleIQ jingle = new JingleIQ(JingleAction.SESSION_INFO, "123");
-        jingle.setType(IQ.Type.get);
-        jingle.setTo(JidCreate.from(to));
+	private JingleIQ getIq(String to) throws XmppStringprepException {
+		JingleIQ jingle = new JingleIQ(JingleAction.SESSION_INFO, "123");
+		jingle.setType(IQ.Type.get);
+		jingle.setTo(JidCreate.from(to));
 
-        return jingle;
-    }
+		return jingle;
+	}
 }

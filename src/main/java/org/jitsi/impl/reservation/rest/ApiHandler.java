@@ -17,373 +17,330 @@
  */
 package org.jitsi.impl.reservation.rest;
 
-import net.java.sip.communicator.util.*;
-import org.apache.http.*;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.message.*;
-import org.apache.http.util.*;
-import org.jitsi.impl.reservation.rest.json.*;
-import org.json.simple.parser.*;
-import org.json.simple.parser.ParseException;
-import org.jxmpp.jid.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-import java.io.*;
-import java.lang.Object;
-import java.util.*;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.jitsi.impl.reservation.rest.json.ConferenceJsonHandler;
+import org.jitsi.impl.reservation.rest.json.ErrorJsonHandler;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.jxmpp.jid.EntityBareJid;
+
+import net.java.sip.communicator.util.Logger;
 
 /**
- * Class deals with JSON objects serialization and sending requests to REST
- * API endpoint.
+ * Class deals with JSON objects serialization and sending requests to REST API
+ * endpoint.
  *
  * @author Pawel Domas
  */
-public class ApiHandler
-{
-    /**
-     * The logger
-     */
-    private static final Logger logger = Logger.getLogger(ApiHandler.class);
+public class ApiHandler {
+	/**
+	 * The logger
+	 */
+	private static final Logger logger = Logger.getLogger(ApiHandler.class);
 
-    /**
-     * Base URL of the REST API.
-     */
-    private final String baseUrl;
+	/**
+	 * Base URL of the REST API.
+	 */
+	private final String baseUrl;
 
-    /**
-     * HTTP client used for sending requests.
-     */
-    private final CloseableHttpClient client
-            = HttpClientBuilder.create().build();
+	/**
+	 * HTTP client used for sending requests.
+	 */
+	private final CloseableHttpClient client = HttpClientBuilder.create().build();
 
-    /**
-     * <tt>JSONParser</tt> instance used for parsing JSON.
-     */
-    private final JSONParser jsonParser = new JSONParser();
+	/**
+	 * <tt>JSONParser</tt> instance used for parsing JSON.
+	 */
+	private final JSONParser jsonParser = new JSONParser();
 
-    /**
-     * JSON handler for <tt>Conference</tt> objects.
-     */
-    private final ConferenceJsonHandler conferenceJson
-            = new ConferenceJsonHandler();
+	/**
+	 * JSON handler for <tt>Conference</tt> objects.
+	 */
+	private final ConferenceJsonHandler conferenceJson = new ConferenceJsonHandler();
 
-    /**
-     * JSON handler for error responses.
-     */
-    private final ErrorJsonHandler errorJson = new ErrorJsonHandler();
+	/**
+	 * JSON handler for error responses.
+	 */
+	private final ErrorJsonHandler errorJson = new ErrorJsonHandler();
 
-    /**
-     * Creates new instance of <tt>ApiHandler</tt>.
-     *
-     * @param baseUrl the base URL of REST API.
-     */
-    public ApiHandler(String baseUrl)
-    {
-        this.baseUrl = baseUrl;
-    }
+	/**
+	 * Creates new instance of <tt>ApiHandler</tt>.
+	 *
+	 * @param baseUrl the base URL of REST API.
+	 */
+	public ApiHandler(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
 
-    /**
-     * Send Conference POST request to API endpoint which is used for
-     * allocating new conferences in reservation system.
-     *
-     * @param ownerEmail email of new conference owner
-     * @param mucRoomName full name of MUC room that is hosting the conference.
-     *                    {room_name}@{muc.server.net}
-     *
-     * @return <tt>ApiResult</tt> that contains system response. It will contain
-     *         <tt>Conference</tt> instance filled with data from
-     *         the reservation system if everything goes OK.
-     *
-     * @throws IOException IO exception if connectivity issues have occurred.
-     * @throws ParseException parse exception if any problems during JSON
-     *         parsing have occurred.
-     */
-    public ApiResult createNewConference(String ownerEmail,
-                                         EntityBareJid mucRoomName)
-            throws IOException, ParseException
-    {
-        Conference conference
-            = new Conference(mucRoomName, ownerEmail, new Date());
+	/**
+	 * Send Conference POST request to API endpoint which is used for allocating new
+	 * conferences in reservation system.
+	 *
+	 * @param ownerEmail  email of new conference owner
+	 * @param mucRoomName full name of MUC room that is hosting the conference.
+	 *                    {room_name}@{muc.server.net}
+	 *
+	 * @return <tt>ApiResult</tt> that contains system response. It will contain
+	 *         <tt>Conference</tt> instance filled with data from the reservation
+	 *         system if everything goes OK.
+	 *
+	 * @throws IOException    IO exception if connectivity issues have occurred.
+	 * @throws ParseException parse exception if any problems during JSON parsing
+	 *                        have occurred.
+	 */
+	public ApiResult createNewConference(String ownerEmail, EntityBareJid mucRoomName)
+			throws IOException, ParseException {
+		Conference conference = new Conference(mucRoomName, ownerEmail, new Date());
 
-        HttpPost post = new HttpPost(baseUrl + "/conference");
+		HttpPost post = new HttpPost(baseUrl + "/conference");
 
-        List<NameValuePair> nameValuePairs = new ArrayList<>(1);
-        Map<String, Object> jsonMap = conference.createJSonMap();
+		List<NameValuePair> nameValuePairs = new ArrayList<>(1);
+		Map<String, Object> jsonMap = conference.createJSonMap();
 
-        for (Map.Entry<String, Object> entry : jsonMap.entrySet())
-        {
-            nameValuePairs.add(
-                new BasicNameValuePair(
-                        entry.getKey(), String.valueOf(entry.getValue())));
-        }
+		for (Map.Entry<String, Object> entry : jsonMap.entrySet()) {
+			nameValuePairs.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+		}
 
-        post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF8"));
+		post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF8"));
 
-        logger.info("Sending post: " + jsonMap);
+		logger.info("Sending post: " + jsonMap);
 
-        HttpResponse response = null;
-        
-        try
-        {
-            response = client.execute(post);
+		HttpResponse response = null;
 
-            int statusCode = response.getStatusLine().getStatusCode();
+		try {
+			response = client.execute(post);
 
-            logger.info("STATUS CODE: " + statusCode);
+			int statusCode = response.getStatusLine().getStatusCode();
 
-            if (200 == statusCode || 201 == statusCode)
-            {
-                // OK
-                readConferenceResponse(conference, response);
+			logger.info("STATUS CODE: " + statusCode);
 
-                return new ApiResult(statusCode, conference);
-            }
-            else
-            {
-                ErrorResponse error = readErrorResponse(response);
+			if (200 == statusCode || 201 == statusCode) {
+				// OK
+				readConferenceResponse(conference, response);
 
-                return new ApiResult(statusCode, error);
-            }
-        }
-        finally
-        {
-            if (response != null && response.getEntity() != null)
-            {
-                EntityUtils.consume(response.getEntity());
-            }
-        }
-    }
+				return new ApiResult(statusCode, conference);
+			} else {
+				ErrorResponse error = readErrorResponse(response);
 
-    /**
-     * Sends Conference GET request to the REST API endpoint. Is used to read
-     * info about the conference from the reservation system.
-     *
-     * @param conferenceId the identifier of the conference for which we want
-     *                     to read the data.
-     *
-     * @return <tt>ApiResult</tt> which describes the response. It will contain
-     *         <tt>Conference</tt> if data has been read successfully.
-     *
-     * @throws IOException if any IO problems occur.
-     * @throws ParseException if any problems during JSON parsing occur.
-     */
-    public ApiResult getConference(Number conferenceId)
-            throws IOException, ParseException
-    {
-        HttpGet get = new HttpGet(baseUrl + "/conference/" + conferenceId);
+				return new ApiResult(statusCode, error);
+			}
+		} finally {
+			if (response != null && response.getEntity() != null) {
+				EntityUtils.consume(response.getEntity());
+			}
+		}
+	}
 
-        HttpResponse response = null;
-        
-        try
-        {
-            response = client.execute(get);
-    
-            int statusCode = response.getStatusLine().getStatusCode();
-    
-            if (200 == statusCode || 201 == statusCode)
-            {
-                // OK
-                Conference conference
-                    = readConferenceResponse(null, response);
-    
-                return new ApiResult(statusCode, conference);
-            }
-            else
-            {
-                ErrorResponse error = readErrorResponse(response);
-    
-                return new ApiResult(statusCode, error);
-            }
-        }
-        finally 
-        {
-            if (response != null && response.getEntity() != null)
-            {
-                EntityUtils.consume(response.getEntity());
-            }
-        }
-    }
+	/**
+	 * Sends Conference GET request to the REST API endpoint. Is used to read info
+	 * about the conference from the reservation system.
+	 *
+	 * @param conferenceId the identifier of the conference for which we want to
+	 *                     read the data.
+	 *
+	 * @return <tt>ApiResult</tt> which describes the response. It will contain
+	 *         <tt>Conference</tt> if data has been read successfully.
+	 *
+	 * @throws IOException    if any IO problems occur.
+	 * @throws ParseException if any problems during JSON parsing occur.
+	 */
+	public ApiResult getConference(Number conferenceId) throws IOException, ParseException {
+		HttpGet get = new HttpGet(baseUrl + "/conference/" + conferenceId);
 
-    /**
-     * Sends conference DELETE request to the REST API endpoint.
-     *
-     * @param conferenceId the identifier of the conference to be destroyed.
-     *
-     * @return <tt>ApiResult</tt> that describes the response. Check
-     *         <tt>ApiResult#statusCode</tt> to see if it went OK.
-     *
-     * @throws IOException if any IO problems have occurred.
-     * @throws ParseException if there were any problems when parsing JSON data
-     */
-    public ApiResult deleteConference(Number conferenceId)
-            throws IOException, ParseException
-    {
-        HttpDelete delete
-            = new HttpDelete(baseUrl + "/conference/" + conferenceId);
+		HttpResponse response = null;
 
-        HttpResponse response = null;
+		try {
+			response = client.execute(get);
 
-        try
-        {
-            response = client.execute(delete);
+			int statusCode = response.getStatusLine().getStatusCode();
 
-            int statusCode = response.getStatusLine().getStatusCode();
+			if (200 == statusCode || 201 == statusCode) {
+				// OK
+				Conference conference = readConferenceResponse(null, response);
 
-            if (200 == statusCode || 201 == statusCode)
-            {
-                // OK
-                return new ApiResult(statusCode);
-            }
-            else
-            {
-                ErrorResponse error = readErrorResponse(response);
+				return new ApiResult(statusCode, conference);
+			} else {
+				ErrorResponse error = readErrorResponse(response);
 
-                return new ApiResult(statusCode, error);
-            }
-        }
-        finally
-        {
-            if (response != null && response.getEntity() != null)
-            {
-                EntityUtils.consume(response.getEntity());
-            }
-        }
-    }
+				return new ApiResult(statusCode, error);
+			}
+		} finally {
+			if (response != null && response.getEntity() != null) {
+				EntityUtils.consume(response.getEntity());
+			}
+		}
+	}
 
-    /**
-     * Parses error response.
-     *
-     * @param response parsed <tt>ErrorResponse</tt>
-     *
-     * @return <tt>ErrorResponse</tt> parsed from HTTP content stream.
-     *
-     * @throws IOException if any IO issues occur.
-     * @throws ParseException if any issues with JSON parsing occur.
-     */
-    private ErrorResponse readErrorResponse(HttpResponse response)
-            throws IOException, ParseException
-    {
-        BufferedReader rd
-            = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
+	/**
+	 * Sends conference DELETE request to the REST API endpoint.
+	 *
+	 * @param conferenceId the identifier of the conference to be destroyed.
+	 *
+	 * @return <tt>ApiResult</tt> that describes the response. Check
+	 *         <tt>ApiResult#statusCode</tt> to see if it went OK.
+	 *
+	 * @throws IOException    if any IO problems have occurred.
+	 * @throws ParseException if there were any problems when parsing JSON data
+	 */
+	public ApiResult deleteConference(Number conferenceId) throws IOException, ParseException {
+		HttpDelete delete = new HttpDelete(baseUrl + "/conference/" + conferenceId);
 
-        jsonParser.parse(rd, errorJson);
+		HttpResponse response = null;
 
-        return errorJson.getResult();
-    }
+		try {
+			response = client.execute(delete);
 
-    /**
-     * Parses JSON string returned in HTTP response and
-     * converts it to <tt>Conference</tt> instance.
-     *
-     * @param conference <tt>Conference</tt> instance that contains the data
-     *                   returned by API endpoint.
-     * @param response HTTP response returned by the API endpoint.
-     *
-     * @return <tt>Conference</tt> instance that contains the data
-     *                   returned by API endpoint.
-     *
-     * @throws IOException if any IO problems occur.
-     * @throws ParseException if any problems with JSON parsing occur.
-     */
-    private Conference readConferenceResponse(Conference conference,
-                                              HttpResponse response)
-            throws IOException, ParseException
-    {
-        BufferedReader rd
-            = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
+			int statusCode = response.getStatusLine().getStatusCode();
 
-        if (conference != null)
-        {
-            conferenceJson.setForUpdate(conference);
-        }
+			if (200 == statusCode || 201 == statusCode) {
+				// OK
+				return new ApiResult(statusCode);
+			} else {
+				ErrorResponse error = readErrorResponse(response);
 
-        jsonParser.parse(rd, conferenceJson);
+				return new ApiResult(statusCode, error);
+			}
+		} finally {
+			if (response != null && response.getEntity() != null) {
+				EntityUtils.consume(response.getEntity());
+			}
+		}
+	}
 
-        if (conference == null)
-        {
-            conference = conferenceJson.getResult();
-        }
+	/**
+	 * Parses error response.
+	 *
+	 * @param response parsed <tt>ErrorResponse</tt>
+	 *
+	 * @return <tt>ErrorResponse</tt> parsed from HTTP content stream.
+	 *
+	 * @throws IOException    if any IO issues occur.
+	 * @throws ParseException if any issues with JSON parsing occur.
+	 */
+	private ErrorResponse readErrorResponse(HttpResponse response) throws IOException, ParseException {
+		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-        logger.info("ID: " + conference.getId());
-        logger.info("PIN: " + conference.getPin());
-        logger.info("URL: " + conference.getUrl());
-        logger.info("SIP ID: " + conference.getSipId());
-        logger.info("START TIME: " + conference.getStartTime());
-        logger.info("DURATION: " + conference.getDuration());
+		jsonParser.parse(rd, errorJson);
 
-        return conference;
-    }
+		return errorJson.getResult();
+	}
 
-    /**
-     * Structure used for holding processing results. It contains HTTP status
-     * code, <tt>Conference</tt> instance which represents the data retrieved
-     * from the API or <tt>ErrorResponse</tt> which contains error details.
-     */
-    static class ApiResult
-    {
-        /**
-         * HTTP status code returned by the API.
-         */
-        int statusCode;
+	/**
+	 * Parses JSON string returned in HTTP response and converts it to
+	 * <tt>Conference</tt> instance.
+	 *
+	 * @param conference <tt>Conference</tt> instance that contains the data
+	 *                   returned by API endpoint.
+	 * @param response   HTTP response returned by the API endpoint.
+	 *
+	 * @return <tt>Conference</tt> instance that contains the data returned by API
+	 *         endpoint.
+	 *
+	 * @throws IOException    if any IO problems occur.
+	 * @throws ParseException if any problems with JSON parsing occur.
+	 */
+	private Conference readConferenceResponse(Conference conference, HttpResponse response)
+			throws IOException, ParseException {
+		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-        /**
-         * <tt>Conference</tt> instance filled with data retrieved from the API.
-         */
-        Conference conference;
+		if (conference != null) {
+			conferenceJson.setForUpdate(conference);
+		}
 
-        /**
-         * <tt>ErrorResponse</tt> which contains API error description.
-         */
-        ErrorResponse error;
+		jsonParser.parse(rd, conferenceJson);
 
-        /**
-         * Creates new <tt>ApiResult</tt> insatnce for given HTTP status code.
-         *
-         * @param statusCode HTTP status code returned by the API endpoint.
-         */
-        public ApiResult(int statusCode)
-        {
-            this.statusCode = statusCode;
-        }
+		if (conference == null) {
+			conference = conferenceJson.getResult();
+		}
 
-        /**
-         * Creates <tt>ApiResult</tt> which contains <tt>Conference</tt> data
-         * read from the API.
-         *
-         * @param statusCode HTTP status code returned by the API.
-         * @param conference <tt>Conference</tt> instance which contains the
-         *                   data read from the API.
-         */
-        public ApiResult(int statusCode, Conference conference)
-        {
-            this.statusCode = statusCode;
-            this.conference = conference;
-        }
+		logger.info("ID: " + conference.getId());
+		logger.info("PIN: " + conference.getPin());
+		logger.info("URL: " + conference.getUrl());
+		logger.info("SIP ID: " + conference.getSipId());
+		logger.info("START TIME: " + conference.getStartTime());
+		logger.info("DURATION: " + conference.getDuration());
 
-        /**
-         * Creates new <tt>ApiResult</tt> for given <tt>ErrorResponse</tt>.
-         *
-         * @param statusCode HTTP status code returned by API endpoint.
-         * @param error <tt>ErrorResponse</tt> that contains error details
-         *              returned by API endpoint.
-         */
-        public ApiResult(int statusCode, ErrorResponse error)
-        {
-            this.statusCode = statusCode;
-            this.error = error;
-        }
+		return conference;
+	}
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString()
-        {
-            return "ApiError[" + statusCode + "](" + error + ")";
-        }
-    }
+	/**
+	 * Structure used for holding processing results. It contains HTTP status code,
+	 * <tt>Conference</tt> instance which represents the data retrieved from the API
+	 * or <tt>ErrorResponse</tt> which contains error details.
+	 */
+	static class ApiResult {
+		/**
+		 * HTTP status code returned by the API.
+		 */
+		int statusCode;
+
+		/**
+		 * <tt>Conference</tt> instance filled with data retrieved from the API.
+		 */
+		Conference conference;
+
+		/**
+		 * <tt>ErrorResponse</tt> which contains API error description.
+		 */
+		ErrorResponse error;
+
+		/**
+		 * Creates new <tt>ApiResult</tt> insatnce for given HTTP status code.
+		 *
+		 * @param statusCode HTTP status code returned by the API endpoint.
+		 */
+		public ApiResult(int statusCode) {
+			this.statusCode = statusCode;
+		}
+
+		/**
+		 * Creates <tt>ApiResult</tt> which contains <tt>Conference</tt> data read from
+		 * the API.
+		 *
+		 * @param statusCode HTTP status code returned by the API.
+		 * @param conference <tt>Conference</tt> instance which contains the data read
+		 *                   from the API.
+		 */
+		public ApiResult(int statusCode, Conference conference) {
+			this.statusCode = statusCode;
+			this.conference = conference;
+		}
+
+		/**
+		 * Creates new <tt>ApiResult</tt> for given <tt>ErrorResponse</tt>.
+		 *
+		 * @param statusCode HTTP status code returned by API endpoint.
+		 * @param error      <tt>ErrorResponse</tt> that contains error details returned
+		 *                   by API endpoint.
+		 */
+		public ApiResult(int statusCode, ErrorResponse error) {
+			this.statusCode = statusCode;
+			this.error = error;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String toString() {
+			return "ApiError[" + statusCode + "](" + error + ")";
+		}
+	}
 }

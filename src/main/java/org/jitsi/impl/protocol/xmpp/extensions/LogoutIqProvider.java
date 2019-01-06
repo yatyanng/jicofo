@@ -17,10 +17,10 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-
-import org.jitsi.util.*;
-import org.jivesoftware.smack.provider.*;
-import org.xmlpull.v1.*;
+import org.jitsi.util.StringUtils;
+import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.xmlpull.v1.XmlPullParser;
 
 /**
  * Provider handles parsing of {@link ConferenceIq} and {@link LoginUrlIq}
@@ -28,61 +28,47 @@ import org.xmlpull.v1.*;
  *
  * @author Pawel Domas
  */
-public class LogoutIqProvider
-    extends IQProvider<LogoutIq>
-{
-    /**
-     * Creates new instance of <tt>ConferenceIqProvider</tt>.
-     */
-    public LogoutIqProvider()
-    {
-        //<logout>
-        ProviderManager.addIQProvider(
-            LogoutIq.ELEMENT_NAME, LogoutIq.NAMESPACE, this);
-    }
+public class LogoutIqProvider extends IQProvider<LogoutIq> {
+	/**
+	 * Creates new instance of <tt>ConferenceIqProvider</tt>.
+	 */
+	public LogoutIqProvider() {
+		// <logout>
+		ProviderManager.addIQProvider(LogoutIq.ELEMENT_NAME, LogoutIq.NAMESPACE, this);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LogoutIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
-        String namespace = parser.getNamespace();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public LogoutIq parse(XmlPullParser parser, int initialDepth) throws Exception {
+		String namespace = parser.getNamespace();
 
-        // Check the namespace
-        if (!ConferenceIq.NAMESPACE.equals(namespace))
-        {
-            return null;
-        }
+		// Check the namespace
+		if (!ConferenceIq.NAMESPACE.equals(namespace)) {
+			return null;
+		}
 
-        String rootElement = parser.getName();
-        LogoutIq logoutIq;
-        if (LogoutIq.ELEMENT_NAME.endsWith(rootElement))
-        {
-            logoutIq = new LogoutIq();
+		String rootElement = parser.getName();
+		LogoutIq logoutIq;
+		if (LogoutIq.ELEMENT_NAME.endsWith(rootElement)) {
+			logoutIq = new LogoutIq();
 
-            String sessionId = parser.getAttributeValue(
-                    "", LogoutIq.SESSION_ID_ATTR);
+			String sessionId = parser.getAttributeValue("", LogoutIq.SESSION_ID_ATTR);
 
-            if (!StringUtils.isNullOrEmpty(sessionId))
-            {
-                logoutIq.setSessionId(sessionId);
-            }
+			if (!StringUtils.isNullOrEmpty(sessionId)) {
+				logoutIq.setSessionId(sessionId);
+			}
 
-            String logoutUrl = parser.getAttributeValue(
-                    "", LogoutIq.LOGOUT_URL_ATTR);
+			String logoutUrl = parser.getAttributeValue("", LogoutIq.LOGOUT_URL_ATTR);
 
-            if (!StringUtils.isNullOrEmpty(logoutUrl))
-            {
-                logoutIq.setLogoutUrl(logoutUrl);
-            }
-        }
-        else
-        {
-            return null;
-        }
+			if (!StringUtils.isNullOrEmpty(logoutUrl)) {
+				logoutIq.setLogoutUrl(logoutUrl);
+			}
+		} else {
+			return null;
+		}
 
-        return logoutIq;
-    }
+		return logoutIq;
+	}
 }

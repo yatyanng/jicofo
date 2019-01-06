@@ -17,39 +17,35 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.AbstractPacketExtension;
 
 /**
  * A packet extension which contains an id of a region.
  *
  * @author Boris Grozev
  */
-public class RegionPacketExtension
-    extends AbstractPacketExtension
-{
-    /**
-     * XML element name of this packet extension.
-     */
-    public static final String ELEMENT_NAME = "region";
+public class RegionPacketExtension extends AbstractPacketExtension {
+	/**
+	 * XML element name of this packet extension.
+	 */
+	public static final String ELEMENT_NAME = "region";
 
-    /**
-     * XML namespace of this packet extension.
-     */
-    public static final String NAMESPACE = "http://jitsi.org/jitsi-meet";
+	/**
+	 * XML namespace of this packet extension.
+	 */
+	public static final String NAMESPACE = "http://jitsi.org/jitsi-meet";
 
-    /**
-     * Creates new instance of <tt>EtherpadPacketExt</tt>.
-     */
-    public RegionPacketExtension()
-    {
-        super(NAMESPACE, ELEMENT_NAME);
-    }
+	/**
+	 * Creates new instance of <tt>EtherpadPacketExt</tt>.
+	 */
+	public RegionPacketExtension() {
+		super(NAMESPACE, ELEMENT_NAME);
+	}
 
-    /**
-     * @return the value of the "id" attribute.
-     */
-    public String getRegionId()
-    {
-        return getAttributeAsString("id");
-    }
+	/**
+	 * @return the value of the "id" attribute.
+	 */
+	public String getRegionId() {
+		return getAttributeAsString("id");
+	}
 }

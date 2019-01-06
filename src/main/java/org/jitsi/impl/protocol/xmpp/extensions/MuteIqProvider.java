@@ -17,88 +17,70 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-import org.jivesoftware.smack.provider.*;
-
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-import org.xmlpull.v1.*;
+import org.jivesoftware.smack.provider.IQProvider;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.xmlpull.v1.XmlPullParser;
 
 /**
  * The parser of {@link MuteIq}.
  *
  * @author Pawel Domas
  */
-public class MuteIqProvider
-    extends IQProvider<MuteIq>
-{
-    /**
-     * Registers this IQ provider into given <tt>ProviderManager</tt>.
-     */
-    public static void registerMuteIqProvider()
-    {
-        ProviderManager.addIQProvider(
-            MuteIq.ELEMENT_NAME,
-            MuteIq.NAMESPACE,
-            new MuteIqProvider());
-    }
+public class MuteIqProvider extends IQProvider<MuteIq> {
+	/**
+	 * Registers this IQ provider into given <tt>ProviderManager</tt>.
+	 */
+	public static void registerMuteIqProvider() {
+		ProviderManager.addIQProvider(MuteIq.ELEMENT_NAME, MuteIq.NAMESPACE, new MuteIqProvider());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MuteIq parse(XmlPullParser parser, int initialDepth)
-        throws Exception
-    {
-        String namespace = parser.getNamespace();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public MuteIq parse(XmlPullParser parser, int initialDepth) throws Exception {
+		String namespace = parser.getNamespace();
 
-        // Check the namespace
-        if (!MuteIq.NAMESPACE.equals(namespace))
-        {
-            return null;
-        }
+		// Check the namespace
+		if (!MuteIq.NAMESPACE.equals(namespace)) {
+			return null;
+		}
 
-        String rootElement = parser.getName();
+		String rootElement = parser.getName();
 
-        MuteIq iq;
+		MuteIq iq;
 
-        if (MuteIq.ELEMENT_NAME.equals(rootElement))
-        {
-            iq = new MuteIq();
-            Jid jid = JidCreate.from(
-                    parser.getAttributeValue("", MuteIq.JID_ATTR_NAME));
-            iq.setJid(jid);
-        }
-        else
-        {
-            return null;
-        }
+		if (MuteIq.ELEMENT_NAME.equals(rootElement)) {
+			iq = new MuteIq();
+			Jid jid = JidCreate.from(parser.getAttributeValue("", MuteIq.JID_ATTR_NAME));
+			iq.setJid(jid);
+		} else {
+			return null;
+		}
 
-        boolean done = false;
+		boolean done = false;
 
-        while (!done)
-        {
-            switch (parser.next())
-            {
-                case XmlPullParser.END_TAG:
-                {
-                    String name = parser.getName();
+		while (!done) {
+			switch (parser.next()) {
+			case XmlPullParser.END_TAG: {
+				String name = parser.getName();
 
-                    if (rootElement.equals(name))
-                    {
-                        done = true;
-                    }
-                    break;
-                }
+				if (rootElement.equals(name)) {
+					done = true;
+				}
+				break;
+			}
 
-                case XmlPullParser.TEXT:
-                {
-                    Boolean mute = Boolean.parseBoolean(parser.getText());
-                    iq.setMute(mute);
-                    break;
-                }
-            }
-        }
+			case XmlPullParser.TEXT: {
+				Boolean mute = Boolean.parseBoolean(parser.getText());
+				iq.setMute(mute);
+				break;
+			}
+			}
+		}
 
-        return iq;
-    }
+		return iq;
+	}
 }

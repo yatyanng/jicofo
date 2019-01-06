@@ -17,13 +17,15 @@
  */
 package mock.xmpp;
 
-import mock.*;
-import net.java.sip.communicator.util.*;
-import org.jitsi.impl.protocol.xmpp.*;
-import org.jitsi.protocol.xmpp.*;
-import org.jxmpp.jid.*;
+import java.util.Objects;
 
-import java.util.*;
+import org.jitsi.impl.protocol.xmpp.XmppProtocolProvider;
+import org.jitsi.protocol.xmpp.AbstractOperationSetJingle;
+import org.jitsi.protocol.xmpp.XmppConnection;
+import org.jxmpp.jid.EntityFullJid;
+
+import mock.MockProtocolProvider;
+import net.java.sip.communicator.util.Logger;
 
 /**
  * Implementation of {@link MockOperationSetJingle} for
@@ -31,45 +33,40 @@ import java.util.*;
  *
  * @author Pawel Domas
  */
-public class MockOperationSetJingle
-    extends AbstractOperationSetJingle
-{
-    /**
-     * The logger used by this class.
-     */
-    private final static Logger logger
-            = Logger.getLogger(MockOperationSetJingle.class);
+public class MockOperationSetJingle extends AbstractOperationSetJingle {
+	/**
+	 * The logger used by this class.
+	 */
+	private final static Logger logger = Logger.getLogger(MockOperationSetJingle.class);
 
-    /**
-     * Parent {@link XmppProtocolProvider}.
-     */
-    private final MockProtocolProvider xmppProvider;
+	/**
+	 * Parent {@link XmppProtocolProvider}.
+	 */
+	private final MockProtocolProvider xmppProvider;
 
-    /**
-     * Creates new instance of <tt>OperationSetJingleImpl</tt>.
-     *
-     * @param xmppProvider parent XMPP protocol provider
-     */
-    public MockOperationSetJingle(MockProtocolProvider xmppProvider)
-    {
-        Objects.requireNonNull(xmppProvider);
-        this.xmppProvider = xmppProvider;
-    }
+	/**
+	 * Creates new instance of <tt>OperationSetJingleImpl</tt>.
+	 *
+	 * @param xmppProvider parent XMPP protocol provider
+	 */
+	public MockOperationSetJingle(MockProtocolProvider xmppProvider) {
+		Objects.requireNonNull(xmppProvider);
+		this.xmppProvider = xmppProvider;
+	}
 
-    /**
-     * Returns our XMPP address that will be used as 'from' attribute
-     * in Jingle QIs.
-     */
-    protected EntityFullJid getOurJID()
-    {
-        return getConnection().getUser();
-    }
+	/**
+	 * Returns our XMPP address that will be used as 'from' attribute in Jingle QIs.
+	 */
+	@Override
+	protected EntityFullJid getOurJID() {
+		return getConnection().getUser();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    protected XmppConnection getConnection()
-    {
-        return xmppProvider.getXmppConnection();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected XmppConnection getConnection() {
+		return xmppProvider.getXmppConnection();
+	}
 }

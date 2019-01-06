@@ -17,136 +17,110 @@
  */
 package org.jitsi.impl.protocol.xmpp;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.health.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.*;
-import net.java.sip.communicator.service.protocol.*;
+import java.util.Hashtable;
 
-import org.jitsi.impl.protocol.xmpp.extensions.*;
+import org.jitsi.impl.protocol.xmpp.extensions.ConferenceIqProvider;
+import org.jitsi.impl.protocol.xmpp.extensions.LoginUrlIqProvider;
+import org.jitsi.impl.protocol.xmpp.extensions.LogoutIqProvider;
+import org.jitsi.impl.protocol.xmpp.extensions.RegionPacketExtension;
+import org.jitsi.impl.protocol.xmpp.extensions.UserInfoPacketExt;
+import org.jitsi.jicofo.discovery.VersionIqProvider;
+import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.parsing.ExceptionLoggingCallback;
+import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smackx.bytestreams.socks5.Socks5Proxy;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
-import org.jitsi.jicofo.discovery.*;
-import org.jitsi.jicofo.discovery.Version;
-import org.jivesoftware.smack.*;
-
-import org.jivesoftware.smack.parsing.*;
-import org.jivesoftware.smack.provider.*;
-import org.jivesoftware.smackx.bytestreams.socks5.*;
-import org.osgi.framework.*;
-
-import java.util.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.DefaultPacketExtensionProvider;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.ColibriIQProvider;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.health.HealthCheckIQProvider;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.JibriIq;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.JibriIqProvider;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jibri.JibriStatusPacketExt;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.StatsId;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.TranscriptionRequestExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.TranscriptionStatusExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jitsimeet.VideoMutedExtension;
+import net.java.sip.communicator.service.protocol.ProtocolNames;
+import net.java.sip.communicator.service.protocol.ProtocolProviderFactory;
 
 /**
  * Bundle activator for {@link XmppProtocolProvider}.
  *
  * @author Pawel Domas
  */
-public class XmppProtocolActivator
-    implements BundleActivator
-{
-    private ServiceRegistration<?> focusRegistration;
+public class XmppProtocolActivator implements BundleActivator {
+	private ServiceRegistration<?> focusRegistration;
 
-    static BundleContext bundleContext;
+	static BundleContext bundleContext;
 
-    /**
-     * Registers PacketExtension providers used by Jicofo
-     */
-    static public void registerXmppExtensions()
-    {
-        // Constructors called to register extension providers
-        new ConferenceIqProvider();
-        new LoginUrlIqProvider();
-        new LogoutIqProvider();
-        // Colibri
-        new ColibriIQProvider();
-        // HealthChecks
-        HealthCheckIQProvider.registerIQProvider();
-        // Jibri IQs
-        ProviderManager.addIQProvider(
-                JibriIq.ELEMENT_NAME, JibriIq.NAMESPACE, new JibriIqProvider());
-        JibriStatusPacketExt.registerExtensionProvider();
-        // User info
-        ProviderManager.addExtensionProvider(
-                UserInfoPacketExt.ELEMENT_NAME,
-                UserInfoPacketExt.NAMESPACE,
-                new DefaultPacketExtensionProvider<>(UserInfoPacketExt.class));
-        // <videomuted> element from jitsi-meet presence
-        ProviderManager.addExtensionProvider(
-                VideoMutedExtension.ELEMENT_NAME,
-                VideoMutedExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider<>(
-                        VideoMutedExtension.class));
-        ProviderManager.addExtensionProvider(
-                RegionPacketExtension.ELEMENT_NAME,
-                RegionPacketExtension.NAMESPACE,
-                new DefaultPacketExtensionProvider<>(
-                        RegionPacketExtension.class));
-        ProviderManager.addExtensionProvider(
-                StatsId.ELEMENT_NAME,
-                StatsId.NAMESPACE,
-                new StatsId.Provider());
+	/**
+	 * Registers PacketExtension providers used by Jicofo
+	 */
+	static public void registerXmppExtensions() {
+		// Constructors called to register extension providers
+		new ConferenceIqProvider();
+		new LoginUrlIqProvider();
+		new LogoutIqProvider();
+		// Colibri
+		new ColibriIQProvider();
+		// HealthChecks
+		HealthCheckIQProvider.registerIQProvider();
+		// Jibri IQs
+		ProviderManager.addIQProvider(JibriIq.ELEMENT_NAME, JibriIq.NAMESPACE, new JibriIqProvider());
+		JibriStatusPacketExt.registerExtensionProvider();
+		// User info
+		ProviderManager.addExtensionProvider(UserInfoPacketExt.ELEMENT_NAME, UserInfoPacketExt.NAMESPACE,
+				new DefaultPacketExtensionProvider<>(UserInfoPacketExt.class));
+		// <videomuted> element from jitsi-meet presence
+		ProviderManager.addExtensionProvider(VideoMutedExtension.ELEMENT_NAME, VideoMutedExtension.NAMESPACE,
+				new DefaultPacketExtensionProvider<>(VideoMutedExtension.class));
+		ProviderManager.addExtensionProvider(RegionPacketExtension.ELEMENT_NAME, RegionPacketExtension.NAMESPACE,
+				new DefaultPacketExtensionProvider<>(RegionPacketExtension.class));
+		ProviderManager.addExtensionProvider(StatsId.ELEMENT_NAME, StatsId.NAMESPACE, new StatsId.Provider());
 
-        //Add the extensions used for handling the inviting of transcriber
-        ProviderManager.addExtensionProvider(
-            TranscriptionRequestExtension.ELEMENT_NAME,
-            TranscriptionRequestExtension.NAMESPACE,
-            new DefaultPacketExtensionProvider<>(
-                TranscriptionRequestExtension.class
-            )
-        );
-        ProviderManager.addExtensionProvider(
-            TranscriptionStatusExtension.ELEMENT_NAME,
-            TranscriptionStatusExtension.NAMESPACE,
-            new DefaultPacketExtensionProvider<>(
-                TranscriptionStatusExtension.class
-            )
-        );
+		// Add the extensions used for handling the inviting of transcriber
+		ProviderManager.addExtensionProvider(TranscriptionRequestExtension.ELEMENT_NAME,
+				TranscriptionRequestExtension.NAMESPACE,
+				new DefaultPacketExtensionProvider<>(TranscriptionRequestExtension.class));
+		ProviderManager.addExtensionProvider(TranscriptionStatusExtension.ELEMENT_NAME,
+				TranscriptionStatusExtension.NAMESPACE,
+				new DefaultPacketExtensionProvider<>(TranscriptionStatusExtension.class));
 
-        // Override original Smack Version IQ class
-        ProviderManager.addIQProvider(
-                Version.ELEMENT,
-                Version.NAMESPACE,
-                new VersionIqProvider());
-    }
+		// Override original Smack Version IQ class
+		ProviderManager.addIQProvider(org.jivesoftware.smackx.iqversion.packet.Version.ELEMENT,
+				org.jivesoftware.smackx.iqversion.packet.Version.NAMESPACE, new VersionIqProvider());
+	}
 
-    @Override
-    public void start(BundleContext bundleContext)
-        throws Exception
-    {
-        XmppProtocolActivator.bundleContext = bundleContext;
+	@Override
+	public void start(BundleContext bundleContext) throws Exception {
+		XmppProtocolActivator.bundleContext = bundleContext;
 
-        SmackConfiguration.setDefaultReplyTimeout(15000);
-        // if there is a parsing error, do not break the connection to
-        // the server(the default behaviour) as we need it for
-        // the other conferences
-        SmackConfiguration.setDefaultParsingExceptionCallback(
-            new ExceptionLoggingCallback());
+		SmackConfiguration.setDefaultReplyTimeout(15000);
+		// if there is a parsing error, do not break the connection to
+		// the server(the default behaviour) as we need it for
+		// the other conferences
+		SmackConfiguration.setDefaultParsingExceptionCallback(new ExceptionLoggingCallback());
 
-        Socks5Proxy.setLocalSocks5ProxyEnabled(false);
+		Socks5Proxy.setLocalSocks5ProxyEnabled(false);
 
-        registerXmppExtensions();
+		registerXmppExtensions();
 
-        XmppProviderFactory focusFactory
-            = new XmppProviderFactory(
-                    bundleContext, ProtocolNames.JABBER);
-        Hashtable<String, String> hashtable = new Hashtable<>();
+		XmppProviderFactory focusFactory = new XmppProviderFactory(bundleContext, ProtocolNames.JABBER);
+		Hashtable<String, String> hashtable = new Hashtable<>();
 
-        // Register XMPP
-        hashtable.put(ProtocolProviderFactory.PROTOCOL,
-                      ProtocolNames.JABBER);
+		// Register XMPP
+		hashtable.put(ProtocolProviderFactory.PROTOCOL, ProtocolNames.JABBER);
 
-        focusRegistration = bundleContext.registerService(
-            ProtocolProviderFactory.class.getName(),
-            focusFactory,
-            hashtable);
-    }
+		focusRegistration = bundleContext.registerService(ProtocolProviderFactory.class.getName(), focusFactory,
+				hashtable);
+	}
 
-    @Override
-    public void stop(BundleContext bundleContext)
-        throws Exception
-    {
-        if (focusRegistration != null)
-            focusRegistration.unregister();
-    }
+	@Override
+	public void stop(BundleContext bundleContext) throws Exception {
+		if (focusRegistration != null)
+			focusRegistration.unregister();
+	}
 }

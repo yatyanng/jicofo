@@ -17,141 +17,125 @@
  */
 package org.jitsi.protocol.xmpp.util;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
-import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-import java.util.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.SourcePacketExtension;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.jingle.SourceRidGroupPacketExtension;
 
 /**
  * Utility class for the simulcast {@link SourcePacketExtension} grouping.
  */
-public class SimulcastGrouping
-{
-    /**
-     * The list of FID(RTX) subgroups.
-     */
-    private final List<SourceGroup> fidGroups;
+public class SimulcastGrouping {
+	/**
+	 * The list of FID(RTX) subgroups.
+	 */
+	private final List<SourceGroup> fidGroups;
 
-    /**
-     * The main SIM group.
-     */
-    private final SourceGroup simGroup;
+	/**
+	 * The main SIM group.
+	 */
+	private final SourceGroup simGroup;
 
-    /**
-     * Creates new {@link SimulcastGrouping} for given SIM and FID groups.
-     * @param simGroup a SIM {@link SourceGroup}.
-     * @param fidGroups a {@link List} of FID subgroups.
-     */
-    public SimulcastGrouping(SourceGroup simGroup, List<SourceGroup> fidGroups)
-    {
-        Objects.requireNonNull(simGroup, "simGroup");
+	/**
+	 * Creates new {@link SimulcastGrouping} for given SIM and FID groups.
+	 * 
+	 * @param simGroup  a SIM {@link SourceGroup}.
+	 * @param fidGroups a {@link List} of FID subgroups.
+	 */
+	public SimulcastGrouping(SourceGroup simGroup, List<SourceGroup> fidGroups) {
+		Objects.requireNonNull(simGroup, "simGroup");
 
-        this.simGroup = simGroup;
-        this.fidGroups
-            = fidGroups != null ? fidGroups : new ArrayList<SourceGroup>(0);
+		this.simGroup = simGroup;
+		this.fidGroups = fidGroups != null ? fidGroups : new ArrayList<SourceGroup>(0);
 
-        int simGroupSize = simGroup.getSources().size();
-        int fidGroupCount = this.fidGroups.size();
+		int simGroupSize = simGroup.getSources().size();
+		int fidGroupCount = this.fidGroups.size();
 
-        // Each source in SIM group should contain one corresponding FID group
-        if (fidGroupCount != 0 && fidGroupCount != simGroupSize)
-        {
-            throw new IllegalArgumentException(
-                    "SIM group size != FID group count: "
-                        + simGroup +" != " + fidGroupCount);
-        }
-    }
+		// Each source in SIM group should contain one corresponding FID group
+		if (fidGroupCount != 0 && fidGroupCount != simGroupSize) {
+			throw new IllegalArgumentException(
+					"SIM group size != FID group count: " + simGroup + " != " + fidGroupCount);
+		}
+	}
 
-    /**
-     * Checks if any of the {@link SourcePacketExtension}s which belong to
-     * the given group is contained in this {@link SimulcastGrouping}.
-     *
-     * @param group {@link SourceGroup} to be checked.
-     *
-     * @return <tt>true</tt> or <tt>false</tt>.
-     */
-    public boolean belongsToSimulcastGrouping(SourceGroup group)
-    {
-        for (SourcePacketExtension src : group.getSources())
-        {
-            if (belongsToSimulcastGrouping(src))
-            {
-                return true;
-            }
-        }
+	/**
+	 * Checks if any of the {@link SourcePacketExtension}s which belong to the given
+	 * group is contained in this {@link SimulcastGrouping}.
+	 *
+	 * @param group {@link SourceGroup} to be checked.
+	 *
+	 * @return <tt>true</tt> or <tt>false</tt>.
+	 */
+	public boolean belongsToSimulcastGrouping(SourceGroup group) {
+		for (SourcePacketExtension src : group.getSources()) {
+			if (belongsToSimulcastGrouping(src)) {
+				return true;
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Checks if given {@link SourcePacketExtension} belongs to this
-     * {@link SimulcastGrouping}.
-     *
-     * @param src {@link SourcePacketExtension} to be checked.
-     *
-     * @return <tt>true</tt> or <tt>false</tt>.
-     */
-    public boolean belongsToSimulcastGrouping(SourcePacketExtension src)
-    {
-        if (!fidGroups.isEmpty())
-        {
-            for (SourceGroup fidGroup : fidGroups)
-            {
-                if (fidGroup.belongsToGroup(src))
-                {
-                    return true;
-                }
-            }
+	/**
+	 * Checks if given {@link SourcePacketExtension} belongs to this
+	 * {@link SimulcastGrouping}.
+	 *
+	 * @param src {@link SourcePacketExtension} to be checked.
+	 *
+	 * @return <tt>true</tt> or <tt>false</tt>.
+	 */
+	public boolean belongsToSimulcastGrouping(SourcePacketExtension src) {
+		if (!fidGroups.isEmpty()) {
+			for (SourceGroup fidGroup : fidGroups) {
+				if (fidGroup.belongsToGroup(src)) {
+					return true;
+				}
+			}
 
-            // If there are FID groups they should contain all SIM sources
-            return false;
-        }
+			// If there are FID groups they should contain all SIM sources
+			return false;
+		}
 
-        return simGroup.belongsToGroup(src);
-    }
+		return simGroup.belongsToGroup(src);
+	}
 
-    /**
-     * Gets the MSID for this {@link SimulcastGrouping}.
-     *
-     * @return {@link String}
-     */
-    public String getSimulcastMsid()
-    {
-        return simGroup.getGroupMsid();
-    }
+	/**
+	 * Gets the MSID for this {@link SimulcastGrouping}.
+	 *
+	 * @return {@link String}
+	 */
+	public String getSimulcastMsid() {
+		return simGroup.getGroupMsid();
+	}
 
-    /**
-     * Checks if this SIM group is using RID signaling.
-     *
-     * @return <tt>true</tt> or <tt>false</tt>
-     */
-    public boolean isUsingRidSignaling()
-    {
-        return
-            SourceRidGroupPacketExtension.ELEMENT_NAME.equals(
-                    simGroup.getPacketExtension().getElementName());
-    }
+	/**
+	 * Checks if this SIM group is using RID signaling.
+	 *
+	 * @return <tt>true</tt> or <tt>false</tt>
+	 */
+	public boolean isUsingRidSignaling() {
+		return SourceRidGroupPacketExtension.ELEMENT_NAME.equals(simGroup.getPacketExtension().getElementName());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString()
-    {
-        StringBuilder str = new StringBuilder("Simulcast[");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder("Simulcast[");
 
-        for (SourcePacketExtension simSource : simGroup.getSources())
-        {
-            str.append(simSource.toString()).append(",");
-        }
+		for (SourcePacketExtension simSource : simGroup.getSources()) {
+			str.append(simSource.toString()).append(",");
+		}
 
-        for (SourceGroup fidGroup : fidGroups)
-        {
-            str.append(fidGroup);
-        }
+		for (SourceGroup fidGroup : fidGroups) {
+			str.append(fidGroup);
+		}
 
-        str.append("]");
+		str.append("]");
 
-        return str + "@" + hashCode();
-    }
+		return str + "@" + hashCode();
+	}
 }

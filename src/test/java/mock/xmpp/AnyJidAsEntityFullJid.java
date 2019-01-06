@@ -17,8 +17,17 @@
  */
 package mock.xmpp;
 
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.parts.*;
+import org.jxmpp.jid.BareJid;
+import org.jxmpp.jid.DomainBareJid;
+import org.jxmpp.jid.DomainFullJid;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.EntityFullJid;
+import org.jxmpp.jid.EntityJid;
+import org.jxmpp.jid.FullJid;
+import org.jxmpp.jid.Jid;
+import org.jxmpp.jid.parts.Domainpart;
+import org.jxmpp.jid.parts.Localpart;
+import org.jxmpp.jid.parts.Resourcepart;
 
 /**
  * Mock implementation that accepts any JID and pretends its a
@@ -26,300 +35,250 @@ import org.jxmpp.jid.parts.*;
  * {@link org.jivesoftware.smack.XMPPConnection} that requires a full JID only
  * by contract, but not actually for execution.
  */
-public class AnyJidAsEntityFullJid implements EntityFullJid
-{
-    private final Jid ourJid;
+public class AnyJidAsEntityFullJid implements EntityFullJid {
+	private final Jid ourJid;
 
-    AnyJidAsEntityFullJid(Jid jid)
-    {
-        ourJid = jid;
-    }
+	AnyJidAsEntityFullJid(Jid jid) {
+		ourJid = jid;
+	}
 
-    @Override
-    public Localpart getLocalpart()
-    {
-        return ourJid.getLocalpartOrNull();
-    }
+	@Override
+	public Localpart getLocalpart() {
+		return ourJid.getLocalpartOrNull();
+	}
 
-    @Override
-    public EntityBareJid asEntityBareJid()
-    {
-        return ourJid.asEntityBareJidIfPossible();
-    }
+	@Override
+	public EntityBareJid asEntityBareJid() {
+		return ourJid.asEntityBareJidIfPossible();
+	}
 
-    @Override
-    public String asEntityBareJidString()
-    {
-        Jid bare = ourJid.asEntityBareJidIfPossible();
-        if (bare != null)
-        {
-            return bare.toString();
-        }
+	@Override
+	public String asEntityBareJidString() {
+		Jid bare = ourJid.asEntityBareJidIfPossible();
+		if (bare != null) {
+			return bare.toString();
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public Resourcepart getResourcepart()
-    {
-        return ourJid.getResourceOrNull();
-    }
+	@Override
+	public Resourcepart getResourcepart() {
+		return ourJid.getResourceOrNull();
+	}
 
-    @Override
-    public Domainpart getDomain()
-    {
-        return ourJid.getDomain();
-    }
+	@Override
+	public Domainpart getDomain() {
+		return ourJid.getDomain();
+	}
 
-    @Override
-    public String asUnescapedString()
-    {
-        return ourJid.asUnescapedString();
-    }
+	@Override
+	public String asUnescapedString() {
+		return ourJid.asUnescapedString();
+	}
 
-    @Override
-    public boolean isEntityJid()
-    {
-        return ourJid.isEntityJid();
-    }
+	@Override
+	public boolean isEntityJid() {
+		return ourJid.isEntityJid();
+	}
 
-    @Override
-    public boolean isEntityBareJid()
-    {
-        return ourJid.isEntityBareJid();
-    }
+	@Override
+	public boolean isEntityBareJid() {
+		return ourJid.isEntityBareJid();
+	}
 
-    @Override
-    public boolean isEntityFullJid()
-    {
-        return ourJid.isEntityFullJid();
-    }
+	@Override
+	public boolean isEntityFullJid() {
+		return ourJid.isEntityFullJid();
+	}
 
-    @Override
-    public boolean isDomainBareJid()
-    {
-        return ourJid.isDomainBareJid();
-    }
+	@Override
+	public boolean isDomainBareJid() {
+		return ourJid.isDomainBareJid();
+	}
 
-    @Override
-    public boolean isDomainFullJid()
-    {
-        return ourJid.isDomainFullJid();
-    }
+	@Override
+	public boolean isDomainFullJid() {
+		return ourJid.isDomainFullJid();
+	}
 
-    @Override
-    public boolean hasNoResource()
-    {
-        return ourJid.hasNoResource();
-    }
+	@Override
+	public boolean hasNoResource() {
+		return ourJid.hasNoResource();
+	}
 
-    @Override
-    public boolean hasResource()
-    {
-        return ourJid.hasResource();
-    }
+	@Override
+	public boolean hasResource() {
+		return ourJid.hasResource();
+	}
 
-    @Override
-    public boolean hasLocalpart()
-    {
-        return ourJid.hasLocalpart();
-    }
+	@Override
+	public boolean hasLocalpart() {
+		return ourJid.hasLocalpart();
+	}
 
-    @Override
-    public BareJid asBareJid()
-    {
-        return ourJid.asBareJid();
-    }
+	@Override
+	public BareJid asBareJid() {
+		return ourJid.asBareJid();
+	}
 
-    @Override
-    public EntityBareJid asEntityBareJidIfPossible()
-    {
-        return ourJid.asEntityBareJidIfPossible();
-    }
+	@Override
+	public EntityBareJid asEntityBareJidIfPossible() {
+		return ourJid.asEntityBareJidIfPossible();
+	}
 
-    @Override
-    public EntityBareJid asEntityBareJidOrThrow()
-    {
-        return ourJid.asEntityBareJidOrThrow();
-    }
+	@Override
+	public EntityBareJid asEntityBareJidOrThrow() {
+		return ourJid.asEntityBareJidOrThrow();
+	}
 
-    @Override
-    public EntityFullJid asEntityFullJidIfPossible()
-    {
-        return ourJid.asEntityFullJidIfPossible();
-    }
+	@Override
+	public EntityFullJid asEntityFullJidIfPossible() {
+		return ourJid.asEntityFullJidIfPossible();
+	}
 
-    @Override
-    public EntityFullJid asEntityFullJidOrThrow()
-    {
-        return ourJid.asEntityFullJidOrThrow();
-    }
+	@Override
+	public EntityFullJid asEntityFullJidOrThrow() {
+		return ourJid.asEntityFullJidOrThrow();
+	}
 
-    @Override
-    public EntityJid asEntityJidIfPossible()
-    {
-        return ourJid.asEntityJidIfPossible();
-    }
+	@Override
+	public EntityJid asEntityJidIfPossible() {
+		return ourJid.asEntityJidIfPossible();
+	}
 
-    @Override
-    public EntityJid asEntityJidOrThrow()
-    {
-        return ourJid.asEntityJidOrThrow();
-    }
+	@Override
+	public EntityJid asEntityJidOrThrow() {
+		return ourJid.asEntityJidOrThrow();
+	}
 
-    @Override
-    public FullJid asFullJidIfPossible()
-    {
-        return ourJid.asFullJidIfPossible();
-    }
+	@Override
+	public FullJid asFullJidIfPossible() {
+		return ourJid.asFullJidIfPossible();
+	}
 
-    @Override
-    public EntityFullJid asFullJidOrThrow()
-    {
-        return ourJid.asFullJidOrThrow();
-    }
+	@Override
+	public EntityFullJid asFullJidOrThrow() {
+		return ourJid.asFullJidOrThrow();
+	}
 
-    @Override
-    public DomainBareJid asDomainBareJid()
-    {
-        return ourJid.asDomainBareJid();
-    }
+	@Override
+	public DomainBareJid asDomainBareJid() {
+		return ourJid.asDomainBareJid();
+	}
 
-    @Override
-    public DomainFullJid asDomainFullJidIfPossible()
-    {
-        return ourJid.asDomainFullJidIfPossible();
-    }
+	@Override
+	public DomainFullJid asDomainFullJidIfPossible() {
+		return ourJid.asDomainFullJidIfPossible();
+	}
 
-    @Override
-    public DomainFullJid asDomainFullJidOrThrow()
-    {
-        return ourJid.asDomainFullJidOrThrow();
-    }
+	@Override
+	public DomainFullJid asDomainFullJidOrThrow() {
+		return ourJid.asDomainFullJidOrThrow();
+	}
 
-    @Override
-    public Resourcepart getResourceOrNull()
-    {
-        return ourJid.getResourceOrNull();
-    }
+	@Override
+	public Resourcepart getResourceOrNull() {
+		return ourJid.getResourceOrNull();
+	}
 
-    @Override
-    public Resourcepart getResourceOrEmpty()
-    {
-        return ourJid.getResourceOrEmpty();
-    }
+	@Override
+	public Resourcepart getResourceOrEmpty() {
+		return ourJid.getResourceOrEmpty();
+	}
 
-    @Override
-    public Resourcepart getResourceOrThrow()
-    {
-        return ourJid.getResourceOrThrow();
-    }
+	@Override
+	public Resourcepart getResourceOrThrow() {
+		return ourJid.getResourceOrThrow();
+	}
 
-    @Override
-    public Localpart getLocalpartOrNull()
-    {
-        return ourJid.getLocalpartOrNull();
-    }
+	@Override
+	public Localpart getLocalpartOrNull() {
+		return ourJid.getLocalpartOrNull();
+	}
 
-    @Override
-    public Localpart getLocalpartOrThrow()
-    {
-        return ourJid.getLocalpartOrThrow();
-    }
+	@Override
+	public Localpart getLocalpartOrThrow() {
+		return ourJid.getLocalpartOrThrow();
+	}
 
-    @Override
-    public boolean isParentOf(Jid jid)
-    {
-        return ourJid.isParentOf(jid);
-    }
+	@Override
+	public boolean isParentOf(Jid jid) {
+		return ourJid.isParentOf(jid);
+	}
 
-    @Override
-    public boolean isParentOf(EntityBareJid bareJid)
-    {
-        return ourJid.isParentOf(bareJid);
-    }
+	@Override
+	public boolean isParentOf(EntityBareJid bareJid) {
+		return ourJid.isParentOf(bareJid);
+	}
 
-    @Override
-    public boolean isParentOf(EntityFullJid fullJid)
-    {
-        return ourJid.isParentOf(fullJid);
-    }
+	@Override
+	public boolean isParentOf(EntityFullJid fullJid) {
+		return ourJid.isParentOf(fullJid);
+	}
 
-    @Override
-    public boolean isParentOf(DomainBareJid domainBareJid)
-    {
-        return ourJid.isParentOf(domainBareJid);
-    }
+	@Override
+	public boolean isParentOf(DomainBareJid domainBareJid) {
+		return ourJid.isParentOf(domainBareJid);
+	}
 
-    @Override
-    public boolean isParentOf(DomainFullJid domainFullJid)
-    {
-        return ourJid.isParentOf(domainFullJid);
-    }
+	@Override
+	public boolean isParentOf(DomainFullJid domainFullJid) {
+		return ourJid.isParentOf(domainFullJid);
+	}
 
-    @Override
-    public <T extends Jid> T downcast(Class<T> c)
-    {
-        return ourJid.downcast(c);
-    }
+	@Override
+	public <T extends Jid> T downcast(Class<T> c) {
+		return ourJid.downcast(c);
+	}
 
-    @Override
-    public boolean equals(CharSequence charSequence)
-    {
-        return ourJid.equals(charSequence);
-    }
+	@Override
+	public boolean equals(CharSequence charSequence) {
+		return ourJid.equals(charSequence);
+	}
 
-    @Override
-    public boolean equals(String string)
-    {
-        return ourJid.equals(string);
-    }
+	@Override
+	public boolean equals(String string) {
+		return ourJid.equals(string);
+	}
 
-    @Override
-    public String intern()
-    {
-        return ourJid.intern();
-    }
+	@Override
+	public String intern() {
+		return ourJid.intern();
+	}
 
-    @Override
-    public int length()
-    {
-        return ourJid.length();
-    }
+	@Override
+	public int length() {
+		return ourJid.length();
+	}
 
-    @Override
-    public char charAt(int index)
-    {
-        return ourJid.charAt(index);
-    }
+	@Override
+	public char charAt(int index) {
+		return ourJid.charAt(index);
+	}
 
-    @Override
-    public CharSequence subSequence(int start, int end)
-    {
-        return ourJid.subSequence(start, end);
-    }
+	@Override
+	public CharSequence subSequence(int start, int end) {
+		return ourJid.subSequence(start, end);
+	}
 
-    @Override
-    public int compareTo(Jid o)
-    {
-        return ourJid.compareTo(o);
-    }
+	@Override
+	public int compareTo(Jid o) {
+		return ourJid.compareTo(o);
+	}
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        return ourJid.equals(obj);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		return ourJid.equals(obj);
+	}
 
-    @Override
-    public int hashCode()
-    {
-        return ourJid.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return ourJid.hashCode();
+	}
 
-    @Override
-    public String toString()
-    {
-        return ourJid.toString();
-    }
+	@Override
+	public String toString() {
+		return ourJid.toString();
+	}
 }

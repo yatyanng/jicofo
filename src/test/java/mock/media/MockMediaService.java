@@ -17,238 +17,199 @@
  */
 package mock.media;
 
-import org.jitsi.service.neomedia.*;
-import org.jitsi.service.neomedia.codec.*;
-import org.jitsi.service.neomedia.device.*;
-import org.jitsi.service.neomedia.format.*;
-import org.jitsi.service.neomedia.recording.*;
-
-import java.awt.*;
-import java.beans.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Point;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.jitsi.service.neomedia.MediaService;
+import org.jitsi.service.neomedia.MediaStream;
+import org.jitsi.service.neomedia.MediaType;
+import org.jitsi.service.neomedia.MediaUseCase;
+import org.jitsi.service.neomedia.RTPTranslator;
+import org.jitsi.service.neomedia.SrtpControl;
+import org.jitsi.service.neomedia.SrtpControlType;
+import org.jitsi.service.neomedia.StreamConnector;
+import org.jitsi.service.neomedia.VolumeControl;
+import org.jitsi.service.neomedia.codec.EncodingConfiguration;
+import org.jitsi.service.neomedia.device.MediaDevice;
+import org.jitsi.service.neomedia.device.ScreenDevice;
+import org.jitsi.service.neomedia.format.MediaFormat;
+import org.jitsi.service.neomedia.format.MediaFormatFactory;
+import org.jitsi.service.neomedia.recording.Recorder;
+import org.jitsi.service.neomedia.recording.RecorderEventHandler;
 
 /**
  *
  */
-public class MockMediaService
-    implements MediaService
-{
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+public class MockMediaService implements MediaService {
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-    }
+	}
 
-    @Override
-    public void addRecorderListener(Recorder.Listener listener)
-    {
+	@Override
+	public void addRecorderListener(Recorder.Listener listener) {
 
-    }
+	}
 
-    @Override
-    public EncodingConfiguration createEmptyEncodingConfiguration()
-    {
-        return null;
-    }
+	@Override
+	public EncodingConfiguration createEmptyEncodingConfiguration() {
+		return null;
+	}
 
-    @Override
-    public MediaStream createMediaStream(MediaDevice device)
-    {
-        return null;
-    }
+	@Override
+	public MediaStream createMediaStream(MediaDevice device) {
+		return null;
+	}
 
-    @Override
-    public MediaStream createMediaStream(MediaType mediaType)
-    {
-        return null;
-    }
+	@Override
+	public MediaStream createMediaStream(MediaType mediaType) {
+		return null;
+	}
 
-    @Override
-    public MediaStream createMediaStream(StreamConnector connector,
-                                         MediaDevice device)
-    {
-        return null;
-    }
+	@Override
+	public MediaStream createMediaStream(StreamConnector connector, MediaDevice device) {
+		return null;
+	}
 
-    @Override
-    public MediaStream createMediaStream(StreamConnector connector,
-                                         MediaType mediaType)
-    {
-        return null;
-    }
+	@Override
+	public MediaStream createMediaStream(StreamConnector connector, MediaType mediaType) {
+		return null;
+	}
 
-    @Override
-    public MediaStream createMediaStream(StreamConnector connector,
-                                         MediaDevice device,
-                                         SrtpControl srtpControl)
-    {
-        return null;
-    }
+	@Override
+	public MediaStream createMediaStream(StreamConnector connector, MediaDevice device, SrtpControl srtpControl) {
+		return null;
+	}
 
-    @Override
-    public MediaStream createMediaStream(StreamConnector connector,
-                                         MediaType mediaType,
-                                         SrtpControl srtpControl)
-    {
-        return createMockStream(mediaType);
-    }
+	@Override
+	public MediaStream createMediaStream(StreamConnector connector, MediaType mediaType, SrtpControl srtpControl) {
+		return createMockStream(mediaType);
+	}
 
-    private MockMediaStream createMockStream(MediaType mediaType)
-    {
-        if (MediaType.VIDEO.equals(mediaType))
-        {
-            return new MockVideoMediaStream();
-        }
-        else
-        {
-            return new MockMediaStream();
-        }
-    }
+	private MockMediaStream createMockStream(MediaType mediaType) {
+		if (MediaType.VIDEO.equals(mediaType)) {
+			return new MockVideoMediaStream();
+		} else {
+			return new MockMediaStream();
+		}
+	}
 
-    @Override
-    public MediaDevice createMixer(MediaDevice device)
-    {
-        return null;
-    }
+	@Override
+	public MediaDevice createMixer(MediaDevice device) {
+		return null;
+	}
 
-    @Override
-    public Recorder createRecorder(MediaDevice device)
-    {
-        return null;
-    }
+	@Override
+	public Recorder createRecorder(MediaDevice device) {
+		return null;
+	}
 
-    @Override
-    public Recorder createRecorder(RTPTranslator translator)
-    {
-        return null;
-    }
+	@Override
+	public Recorder createRecorder(RTPTranslator translator) {
+		return null;
+	}
 
-    @Override
-    public RTPTranslator createRTPTranslator()
-    {
-        return null;
-    }
+	@Override
+	public RTPTranslator createRTPTranslator() {
+		return null;
+	}
 
-    @Override
-    public SrtpControl createSrtpControl(SrtpControlType srtpControlType)
-    {
-        return null;
-    }
+	@Override
+	public SrtpControl createSrtpControl(SrtpControlType srtpControlType) {
+		return null;
+	}
 
-    @Override
-    public List<ScreenDevice> getAvailableScreenDevices()
-    {
-        return null;
-    }
+	@Override
+	public List<ScreenDevice> getAvailableScreenDevices() {
+		return null;
+	}
 
-    @Override
-    public EncodingConfiguration getCurrentEncodingConfiguration()
-    {
-        return null;
-    }
+	@Override
+	public EncodingConfiguration getCurrentEncodingConfiguration() {
+		return null;
+	}
 
-    @Override
-    public MediaDevice getDefaultDevice(MediaType mediaType,
-                                        MediaUseCase useCase)
-    {
-        return null;
-    }
+	@Override
+	public MediaDevice getDefaultDevice(MediaType mediaType, MediaUseCase useCase) {
+		return null;
+	}
 
-    @Override
-    public ScreenDevice getDefaultScreenDevice()
-    {
-        return null;
-    }
+	@Override
+	public ScreenDevice getDefaultScreenDevice() {
+		return null;
+	}
 
-    @Override
-    public List<MediaDevice> getDevices(MediaType mediaType,
-                                        MediaUseCase useCase)
-    {
-        return null;
-    }
+	@Override
+	public List<MediaDevice> getDevices(MediaType mediaType, MediaUseCase useCase) {
+		return null;
+	}
 
-    @Override
-    public Map<MediaFormat, Byte> getDynamicPayloadTypePreferences()
-    {
-        return null;
-    }
+	@Override
+	public Map<MediaFormat, Byte> getDynamicPayloadTypePreferences() {
+		return null;
+	}
 
-    @Override
-    public MediaFormatFactory getFormatFactory()
-    {
-        return new MockMediaFormatFactory();
-    }
+	@Override
+	public MediaFormatFactory getFormatFactory() {
+		return new MockMediaFormatFactory();
+	}
 
-    @Override
-    public VolumeControl getInputVolumeControl()
-    {
-        return null;
-    }
+	@Override
+	public VolumeControl getInputVolumeControl() {
+		return null;
+	}
 
-    @Override
-    public MediaDevice getMediaDeviceForPartialDesktopStreaming(int width,
-                                                                int height,
-                                                                int x, int y)
-    {
-        return null;
-    }
+	@Override
+	public MediaDevice getMediaDeviceForPartialDesktopStreaming(int width, int height, int x, int y) {
+		return null;
+	}
 
-    @Override
-    public Point getOriginForDesktopStreamingDevice(MediaDevice mediaDevice)
-    {
-        return null;
-    }
+	@Override
+	public Point getOriginForDesktopStreamingDevice(MediaDevice mediaDevice) {
+		return null;
+	}
 
-    @Override
-    public VolumeControl getOutputVolumeControl()
-    {
-        return null;
-    }
+	@Override
+	public VolumeControl getOutputVolumeControl() {
+		return null;
+	}
 
-    @Override
-    public Iterator<Recorder.Listener> getRecorderListeners()
-    {
-        return null;
-    }
+	@Override
+	public Iterator<Recorder.Listener> getRecorderListeners() {
+		return null;
+	}
 
-    @Override
-    public Object getVideoPreviewComponent(MediaDevice device,
-                                           int preferredWidth,
-                                           int preferredHeight)
-    {
-        return null;
-    }
+	@Override
+	public Object getVideoPreviewComponent(MediaDevice device, int preferredWidth, int preferredHeight) {
+		return null;
+	}
 
-    @Override
-    public boolean isPartialStreaming(MediaDevice mediaDevice)
-    {
-        return false;
-    }
+	@Override
+	public boolean isPartialStreaming(MediaDevice mediaDevice) {
+		return false;
+	}
 
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeRecorderListener(Recorder.Listener listener)
-    {
+	@Override
+	public void removeRecorderListener(Recorder.Listener listener) {
 
-    }
+	}
 
-    @Override
-    public String getRtpCname()
-    {
-        return null;
-    }
+	@Override
+	public String getRtpCname() {
+		return null;
+	}
 
-    @Override
-    public RecorderEventHandler createRecorderEventHandlerJson(String filename)
-        throws IOException
-    {
-        return null;
-    }
+	@Override
+	public RecorderEventHandler createRecorderEventHandlerJson(String filename) throws IOException {
+		return null;
+	}
 }

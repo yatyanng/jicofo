@@ -17,89 +17,75 @@
  */
 package org.jitsi.jicofo;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
-import net.java.sip.communicator.util.*;
-import org.jitsi.jicofo.xmpp.*;
-import org.jxmpp.jid.*;
+import org.jitsi.jicofo.xmpp.BaseBrewery;
+import org.jxmpp.jid.Jid;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.ColibriStatsExtension;
+import net.java.sip.communicator.util.Logger;
 
 /**
  * Detects jitsi-videobridge instances through a MUC.
  *
  * @author Boris Grozev
  */
-public class BridgeMucDetector
-    extends BaseBrewery<ColibriStatsExtension>
-{
-    /**
-     * The logger used by the {@link BridgeMucDetector} class and its instances.
-     */
-    private static final Logger logger = Logger.getLogger(BaseBrewery.class);
+public class BridgeMucDetector extends BaseBrewery<ColibriStatsExtension> {
+	/**
+	 * The logger used by the {@link BridgeMucDetector} class and its instances.
+	 */
+	private static final Logger logger = Logger.getLogger(BaseBrewery.class);
 
-    /**
-     * The name of the property used to configure the full JID of the MUC to
-     * use for detection of jitsi-videobridge instances.
-     */
-    public static final String BRIDGE_MUC_PNAME
-        = "org.jitsi.jicofo.BRIDGE_MUC";
+	/**
+	 * The name of the property used to configure the full JID of the MUC to use for
+	 * detection of jitsi-videobridge instances.
+	 */
+	public static final String BRIDGE_MUC_PNAME = "org.jitsi.jicofo.BRIDGE_MUC";
 
-    /**
-     * The {@link BridgeSelector} instance which will be notified when new
-     * jitsi-videobridge instances are detected, or when they update their
-     * status.
-     */
-    private final BridgeSelector bridgeSelector;
+	/**
+	 * The {@link BridgeSelector} instance which will be notified when new
+	 * jitsi-videobridge instances are detected, or when they update their status.
+	 */
+	private final BridgeSelector bridgeSelector;
 
-    /**
-     * Initializes a new {@link BridgeMucDetector} instance.
-     *
-     * @param protocolProvider the {@link ProtocolProviderHandler} instance
-     * to which this {@link BridgeMucDetector} will attach.
-     * @param breweryJid the MUC JID of the room which this detector will join.
-     * @param bridgeSelector the {@link BridgeSelector} instance which will be
-     * notified when new jitsi-videobridge instances are detected, or when they
-     * update their status.
-     */
-    public BridgeMucDetector(
-        ProtocolProviderHandler protocolProvider,
-        String breweryJid,
-        BridgeSelector bridgeSelector)
-    {
-        super(protocolProvider,
-              breweryJid,
-              ColibriStatsExtension.ELEMENT_NAME,
-              ColibriStatsExtension.NAMESPACE);
+	/**
+	 * Initializes a new {@link BridgeMucDetector} instance.
+	 *
+	 * @param protocolProvider the {@link ProtocolProviderHandler} instance to which
+	 *                         this {@link BridgeMucDetector} will attach.
+	 * @param breweryJid       the MUC JID of the room which this detector will
+	 *                         join.
+	 * @param bridgeSelector   the {@link BridgeSelector} instance which will be
+	 *                         notified when new jitsi-videobridge instances are
+	 *                         detected, or when they update their status.
+	 */
+	public BridgeMucDetector(ProtocolProviderHandler protocolProvider, String breweryJid,
+			BridgeSelector bridgeSelector) {
+		super(protocolProvider, breweryJid, ColibriStatsExtension.ELEMENT_NAME, ColibriStatsExtension.NAMESPACE);
 
-        // We prefer to communicate with jitsi-videobridge without going
-        // through the MUC.
-        setUseOccupantJid(false);
+		// We prefer to communicate with jitsi-videobridge without going
+		// through the MUC.
+		setUseOccupantJid(false);
 
-        this.bridgeSelector = bridgeSelector;
-    }
+		this.bridgeSelector = bridgeSelector;
+	}
 
-    /**
-     * {@inheritDoc}
-     * @param jid the brewing instance muc address
-     * @param stats
-     */
-    @Override
-    protected void onInstanceStatusChanged(
-        Jid jid,
-        ColibriStatsExtension stats)
-    {
-        if (logger.isDebugEnabled())
-        {
-            logger.debug(
-                "Received updated status for " + jid + ": " + stats.toXML());
-        }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param jid   the brewing instance muc address
+	 * @param stats
+	 */
+	@Override
+	protected void onInstanceStatusChanged(Jid jid, ColibriStatsExtension stats) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Received updated status for " + jid + ": " + stats.toXML());
+		}
 
-        bridgeSelector.addJvbAddress(jid).setStats(stats);
-    }
+		bridgeSelector.addJvbAddress(jid).setStats(stats);
+	}
 
-    @Override
-    protected void notifyInstanceOffline(Jid jid)
-    {
-        logger.info("A bridge left the MUC: " + jid);
-        bridgeSelector.removeJvbAddress(jid);
-    }
+	@Override
+	protected void notifyInstanceOffline(Jid jid) {
+		logger.info("A bridge left the MUC: " + jid);
+		bridgeSelector.removeJvbAddress(jid);
+	}
 }
-

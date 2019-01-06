@@ -17,27 +17,26 @@
  */
 package org.jitsi.protocol.xmpp.util;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.colibri.ColibriConferenceIQ;
 
 /**
  * Utility operations for {@link ColibriConferenceIQUtil}.
  *
  * @author Pawel Domas
  */
-public class ColibriConferenceIQUtil
-{
-    /**
-     * Obtains the channel count for given media type.
-     * @param channelInfo <tt>ColibriConferenceIQ</tt> from which
-     *        the information will be extracted.
-     * @param type name of the channel's media type (e.g. "audio" or "video").
-     * @return number of channels for the given media type
-     */
-    public static int getChannelCount(ColibriConferenceIQ channelInfo,
-                                      String              type)
-    {
-        ColibriConferenceIQ.Content mediaContent = channelInfo.getContent(type);
+public class ColibriConferenceIQUtil {
+	/**
+	 * Obtains the channel count for given media type.
+	 * 
+	 * @param channelInfo <tt>ColibriConferenceIQ</tt> from which the information
+	 *                    will be extracted.
+	 * @param type        name of the channel's media type (e.g. "audio" or
+	 *                    "video").
+	 * @return number of channels for the given media type
+	 */
+	public static int getChannelCount(ColibriConferenceIQ channelInfo, String type) {
+		ColibriConferenceIQ.Content mediaContent = channelInfo.getContent(type);
 
-        return mediaContent != null ? mediaContent.getChannelCount() : 0;
-    }
+		return mediaContent != null ? mediaContent.getChannelCount() : 0;
+	}
 }

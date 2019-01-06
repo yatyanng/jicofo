@@ -17,119 +17,108 @@
  */
 package mock;
 
-import net.java.sip.communicator.service.protocol.*;
-import net.java.sip.communicator.service.protocol.event.*;
-import net.java.sip.communicator.service.protocol.media.*;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import java.text.*;
-import java.util.*;
+import net.java.sip.communicator.service.protocol.Call;
+import net.java.sip.communicator.service.protocol.CallConference;
+import net.java.sip.communicator.service.protocol.CallPeer;
+import net.java.sip.communicator.service.protocol.CallPeerState;
+import net.java.sip.communicator.service.protocol.CallState;
+import net.java.sip.communicator.service.protocol.OperationFailedException;
+import net.java.sip.communicator.service.protocol.event.CallEvent;
+import net.java.sip.communicator.service.protocol.media.AbstractOperationSetBasicTelephony;
 
 /**
  *
  * @author Pawel Domas
  */
-public class MockBasicTeleOpSet
-    extends AbstractOperationSetBasicTelephony<MockProtocolProvider>
-{
-    private final MockProtocolProvider protocolProvider;
+public class MockBasicTeleOpSet extends AbstractOperationSetBasicTelephony<MockProtocolProvider> {
+	private final MockProtocolProvider protocolProvider;
 
-    private List<MockCall> activeCalls = new ArrayList<MockCall>();
+	private List<MockCall> activeCalls = new ArrayList<MockCall>();
 
+	public MockBasicTeleOpSet(MockProtocolProvider protocolProvider) {
+		this.protocolProvider = protocolProvider;
+	}
 
-    public MockBasicTeleOpSet(MockProtocolProvider protocolProvider)
-    {
-        this.protocolProvider = protocolProvider;
-    }
+	@Override
+	public synchronized Call createCall(String uri, CallConference conference)
+			throws OperationFailedException, ParseException {
+		MockCall outgoingCall = new MockCall(this);
 
-    @Override
-    public synchronized Call createCall(String uri, CallConference conference)
-        throws OperationFailedException, ParseException
-    {
-        MockCall outgoingCall = new MockCall(this);
+		MockCallPeer peer = new MockCallPeer(uri, outgoingCall);
 
-        MockCallPeer peer = new MockCallPeer(uri, outgoingCall);
+		outgoingCall.addCallPeer(peer);
 
-        outgoingCall.addCallPeer(peer);
+		activeCalls.add(outgoingCall);
 
-        activeCalls.add(outgoingCall);
+		fireCallEvent(CallEvent.CALL_INITIATED, outgoingCall);
 
-        fireCallEvent(CallEvent.CALL_INITIATED, outgoingCall);
+		return outgoingCall;
+	}
 
-        return outgoingCall;
-    }
+	@Override
+	public void answerCallPeer(CallPeer peer) throws OperationFailedException {
 
-    @Override
-    public void answerCallPeer(CallPeer peer)
-        throws OperationFailedException
-    {
+		((MockCallPeer) peer).setState(CallPeerState.CONNECTED);
 
-        ((MockCallPeer) peer).setState(CallPeerState.CONNECTED);
+		((MockCall) peer.getCall()).setCallState(CallState.CALL_IN_PROGRESS);
+	}
 
-        ((MockCall) peer.getCall()).setCallState(CallState.CALL_IN_PROGRESS);
-    }
+	@Override
+	public void putOnHold(CallPeer peer) throws OperationFailedException {
+		((MockCallPeer) peer).putOnHold();
+	}
 
-    @Override
-    public void putOnHold(CallPeer peer)
-        throws OperationFailedException
-    {
-        ((MockCallPeer) peer).putOnHold();
-    }
+	@Override
+	public void putOffHold(CallPeer peer) throws OperationFailedException {
+		((MockCallPeer) peer).putOffHold();
+	}
 
-    @Override
-    public void putOffHold(CallPeer peer)
-        throws OperationFailedException
-    {
-        ((MockCallPeer) peer).putOffHold();
-    }
+	@Override
+	public void hangupCallPeer(CallPeer peer) throws OperationFailedException {
+		((MockCall) peer.getCall()).hangup();
+	}
 
-    @Override
-    public void hangupCallPeer(CallPeer peer)
-        throws OperationFailedException
-    {
-        ((MockCall)peer.getCall()).hangup();
-    }
+	@Override
+	public void hangupCallPeer(CallPeer peer, int reasonCode, String reason) throws OperationFailedException {
+		hangupCallPeer(peer);
+	}
 
-    @Override
-    public void hangupCallPeer(CallPeer peer, int reasonCode, String reason)
-        throws OperationFailedException
-    {
-        hangupCallPeer(peer);
-    }
+	@Override
+	public synchronized Iterator<? extends Call> getActiveCalls() {
+		return activeCalls.iterator();
+	}
 
-    @Override
-    public synchronized Iterator<? extends Call> getActiveCalls()
-    {
-        return activeCalls.iterator();
-    }
+	@Override
+	public MockProtocolProvider getProtocolProvider() {
+		return protocolProvider;
+	}
 
-    @Override
-    public MockProtocolProvider getProtocolProvider()
-    {
-        return protocolProvider;
-    }
+	public synchronized MockCall createIncomingCall(String calee, Map<String, Object> parameters) {
+		MockCall incomingCall = new MockCall(this);
 
-    public synchronized MockCall createIncomingCall(
-            String calee, Map<String, Object> parameters)
-    {
-        MockCall incomingCall = new MockCall(this);
+		MockCallPeer peer = new MockCallPeer(calee, incomingCall);
 
-        MockCallPeer peer = new MockCallPeer(calee, incomingCall);
+		incomingCall.addCallPeer(peer);
 
-        incomingCall.addCallPeer(peer);
+		activeCalls.add(incomingCall);
 
-        activeCalls.add(incomingCall);
+		fireCallEvent(CallEvent.CALL_RECEIVED, incomingCall);
 
-        fireCallEvent(CallEvent.CALL_RECEIVED, incomingCall);
+		// FIXME: FIX THIS AFTER SIP GW IS MERGED
+		// if (parameters != null)
+		// {
+		// for (String key : parameters.keySet())
+		// {
+		// incomingCall.setParameter(key, parameters.get(key));
+		// }
+		// }
 
-        // FIXME: FIX THIS AFTER SIP GW IS MERGED
-        //if (parameters != null)
-        //{
-          //  for (String key : parameters.keySet())
-            //{
-              //  incomingCall.setParameter(key, parameters.get(key));
-            //}
-        //}
-
-        return incomingCall;
-    }
+		return incomingCall;
+	}
 }

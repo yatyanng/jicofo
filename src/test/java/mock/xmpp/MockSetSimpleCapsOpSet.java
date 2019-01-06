@@ -17,126 +17,101 @@
  */
 package mock.xmpp;
 
-import org.jitsi.protocol.xmpp.*;
-import org.jxmpp.jid.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import java.util.*;
+import org.jitsi.protocol.xmpp.OperationSetSimpleCaps;
+import org.jxmpp.jid.Jid;
 
 /**
  *
  */
-public class MockSetSimpleCapsOpSet
-    extends MockCapsNode
-    implements OperationSetSimpleCaps
-{
-    private long discoveryDelay = 0;
+public class MockSetSimpleCapsOpSet extends MockCapsNode implements OperationSetSimpleCaps {
+	private long discoveryDelay = 0;
 
-    public MockSetSimpleCapsOpSet(Jid domain)
-    {
-        super(domain, new String[]{});
-    }
+	public MockSetSimpleCapsOpSet(Jid domain) {
+		super(domain, new String[] {});
+	}
 
-    public void addDiscoveryDelay(long millis)
-    {
-        this.discoveryDelay = millis;
-    }
+	public void addDiscoveryDelay(long millis) {
+		this.discoveryDelay = millis;
+	}
 
-    private MockCapsNode findFirstLevel(Jid name)
-    {
-        for (MockCapsNode node : childNodes)
-        {
-            if (node.getNodeName().equals(name))
-            {
-                return node;
-            }
-        }
+	private MockCapsNode findFirstLevel(Jid name) {
+		for (MockCapsNode node : childNodes) {
+			if (node.getNodeName().equals(name)) {
+				return node;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public Set<Jid> getItems(Jid nodeName)
-    {
-        Set<Jid> result = new HashSet<>(childNodes.size());
+	@Override
+	public Set<Jid> getItems(Jid nodeName) {
+		Set<Jid> result = new HashSet<>(childNodes.size());
 
-        MockCapsNode node;
-        if (nodeName.toString().endsWith(getNodeName().toString()))
-        {
-            node = this;
-        }
-        else
-        {
-            node = findFirstLevel(nodeName);
-        }
-        if (node != null)
-        {
-            for (MockCapsNode child : node.getChildNodes())
-            {
-                result.add(child.getNodeName());
-            }
-        }
+		MockCapsNode node;
+		if (nodeName.toString().endsWith(getNodeName().toString())) {
+			node = this;
+		} else {
+			node = findFirstLevel(nodeName);
+		}
+		if (node != null) {
+			for (MockCapsNode child : node.getChildNodes()) {
+				result.add(child.getNodeName());
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public boolean hasFeatureSupport(Jid contactAddress, String[] features)
-    {
-        MockCapsNode node = findChild(contactAddress);
-        if (node == null)
-        {
-            return false;
-        }
+	@Override
+	public boolean hasFeatureSupport(Jid contactAddress, String[] features) {
+		MockCapsNode node = findChild(contactAddress);
+		if (node == null) {
+			return false;
+		}
 
-        String[] nodeFeatures = node.getFeatures();
+		String[] nodeFeatures = node.getFeatures();
 
-        for (String feature : features)
-        {
-            boolean found = false;
-            for (String toCheck : nodeFeatures)
-            {
-                if (toCheck.equals(feature))
-                {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+		for (String feature : features) {
+			boolean found = false;
+			for (String toCheck : nodeFeatures) {
+				if (toCheck.equals(feature)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    @Override
-    public List<String> getFeatures(Jid node)
-    {
-        if (discoveryDelay > 0)
-        {
-            try
-            {
-                Thread.sleep(discoveryDelay);
-            }
-            catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
+	@Override
+	public List<String> getFeatures(Jid node) {
+		if (discoveryDelay > 0) {
+			try {
+				Thread.sleep(discoveryDelay);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
-        MockCapsNode capsNode = findChild(node);
-        if (capsNode == null)
-        {
-            return null;
-        }
+		MockCapsNode capsNode = findChild(node);
+		if (capsNode == null) {
+			return null;
+		}
 
-        return Arrays.asList(capsNode.getFeatures());
-    }
+		return Arrays.asList(capsNode.getFeatures());
+	}
 
-    //@Override
-    public boolean hasFeatureSupport(String Jid, String subnode,
-                                     String[] features)
-    {
-        return false;
-    }
+	// @Override
+	public boolean hasFeatureSupport(String Jid, String subnode, String[] features) {
+		return false;
+	}
 }

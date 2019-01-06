@@ -17,8 +17,9 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
-import org.jitsi.util.*;
+import org.jitsi.util.StringUtils;
+
+import net.java.sip.communicator.impl.protocol.jabber.extensions.AbstractPacketExtension;
 
 /**
  * Packet extension included in Jitsi-Meet MUC presence to signal extra
@@ -26,60 +27,54 @@ import org.jitsi.util.*;
  *
  * @author Pawel Domas
  */
-public class UserInfoPacketExt
-    extends AbstractPacketExtension
-{
-    /**
-     * XML element name of this packet extension.
-     */
-    public static final String ELEMENT_NAME = "userinfo";
+public class UserInfoPacketExt extends AbstractPacketExtension {
+	/**
+	 * XML element name of this packet extension.
+	 */
+	public static final String ELEMENT_NAME = "userinfo";
 
-    /**
-     * Name space of start muted packet extension.
-     */
-    public static final String NAMESPACE = "http://jitsi.org/jitmeet/userinfo";
+	/**
+	 * Name space of start muted packet extension.
+	 */
+	public static final String NAMESPACE = "http://jitsi.org/jitmeet/userinfo";
 
-    /**
-     * The name of the "robot" attribute which indicates whether or not given
-     * user is a robot(SIP gateway, recorder component etc.).
-     */
-    public static final String ROBOT_ATTRIBUTE_NAME = "robot";
+	/**
+	 * The name of the "robot" attribute which indicates whether or not given user
+	 * is a robot(SIP gateway, recorder component etc.).
+	 */
+	public static final String ROBOT_ATTRIBUTE_NAME = "robot";
 
-    /**
-     * Creates an {@link UserInfoPacketExt} instance.
-     *
-     */
-    public UserInfoPacketExt()
-    {
-        super(NAMESPACE, ELEMENT_NAME);
-    }
+	/**
+	 * Creates an {@link UserInfoPacketExt} instance.
+	 *
+	 */
+	public UserInfoPacketExt() {
+		super(NAMESPACE, ELEMENT_NAME);
+	}
 
-    /**
-     * Returns <tt>true</tt> if the user is considered a "robot"(recorder
-     * component, SIP gateway etc.), <tt>false</tt> if it's not and
-     * <tt>null</tt> if the attribute value is not defined.
-     */
-    public Boolean isRobot()
-    {
-        String isRobotStr = getAttributeAsString(ROBOT_ATTRIBUTE_NAME);
-        if (!StringUtils.isNullOrEmpty(isRobotStr))
-        {
-            return Boolean.parseBoolean(isRobotStr);
-        }
-        else
-        {
-            return null;
-        }
-    }
+	/**
+	 * Returns <tt>true</tt> if the user is considered a "robot"(recorder component,
+	 * SIP gateway etc.), <tt>false</tt> if it's not and <tt>null</tt> if the
+	 * attribute value is not defined.
+	 */
+	public Boolean isRobot() {
+		String isRobotStr = getAttributeAsString(ROBOT_ATTRIBUTE_NAME);
+		if (!StringUtils.isNullOrEmpty(isRobotStr)) {
+			return Boolean.parseBoolean(isRobotStr);
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Sets new value for the "robot" attribute.
-     * @param isRobot <tt>true</tt> if the user is considered a robot or
-     * <tt>false</tt> otherwise. Pass <tt>null</tt> to remove the attribute.
-     * @see {@link #ROBOT_ATTRIBUTE_NAME}
-     */
-    public void setIsRobot(Boolean isRobot)
-    {
-        setAttribute(ROBOT_ATTRIBUTE_NAME, isRobot);
-    }
+	/**
+	 * Sets new value for the "robot" attribute.
+	 * 
+	 * @param isRobot <tt>true</tt> if the user is considered a robot or
+	 *                <tt>false</tt> otherwise. Pass <tt>null</tt> to remove the
+	 *                attribute.
+	 * @see {@link #ROBOT_ATTRIBUTE_NAME}
+	 */
+	public void setIsRobot(Boolean isRobot) {
+		setAttribute(ROBOT_ATTRIBUTE_NAME, isRobot);
+	}
 }

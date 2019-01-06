@@ -17,91 +17,77 @@
  */
 package org.jitsi.jicofo;
 
-import mock.*;
-import mock.muc.*;
-import mock.util.*;
-
-import net.java.sip.communicator.service.protocol.*;
-
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.jxmpp.jid.*;
-import org.jxmpp.jid.impl.*;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+
+import mock.MockParticipant;
+import mock.MockProtocolProvider;
+import mock.muc.MockMultiUserChat;
+import mock.muc.MockMultiUserChatOpSet;
+import mock.util.TestConference;
+import net.java.sip.communicator.service.protocol.ChatRoomMemberRole;
 
 /**
  *
  */
 @RunWith(JUnit4.class)
-public class RolesTest
-{
-    static OSGiHandler osgi = OSGiHandler.getInstance();
+public class RolesTest {
+	static OSGiHandler osgi = OSGiHandler.getInstance();
 
-    @BeforeClass
-    public static void setUpClass()
-        throws Exception
-    {
-        osgi.init();
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		osgi.init();
+	}
 
-    @AfterClass
-    public static void tearDownClass()
-        throws Exception
-    {
-        osgi.shutdown();
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		osgi.shutdown();
+	}
 
-    /**
-     * Allocates Colibri channels in bundle
-     */
-    @Test
-    public void testPassModeratorRole()
-        throws Exception
-    {
-        EntityBareJid roomName = JidCreate.entityBareFrom(
-                "testroom@conference.pawel.jitsi.net");
-        String serverName = "test-server";
+	/**
+	 * Allocates Colibri channels in bundle
+	 */
+	@Test
+	public void testPassModeratorRole() throws Exception {
+		EntityBareJid roomName = JidCreate.entityBareFrom("testroom@conference.pawel.jitsi.net");
+		String serverName = "test-server";
 
-        TestConference testConference
-            = TestConference.allocate(osgi.bc, serverName, roomName);
+		TestConference testConference = TestConference.allocate(osgi.bc, serverName, roomName);
 
-        MockProtocolProvider pps
-            = testConference.getFocusProtocolProvider();
+		MockProtocolProvider pps = testConference.getFocusProtocolProvider();
 
-        MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
+		MockMultiUserChatOpSet mucOpSet = pps.getMockChatOpSet();
 
-        MockMultiUserChat chat
-            = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
+		MockMultiUserChat chat = (MockMultiUserChat) mucOpSet.findRoom(roomName.toString());
 
-        // Join with all users
-        MockParticipant users[] = new MockParticipant[4];
-        for (int i=0; i < users.length; i++)
-        {
-            users[i] = new MockParticipant("User" + i);
+		// Join with all users
+		MockParticipant users[] = new MockParticipant[4];
+		for (int i = 0; i < users.length; i++) {
+			users[i] = new MockParticipant("User" + i);
 
-            users[i].join(chat);
-        }
-        // Accept invite with all users
-        for (MockParticipant user : users)
-        {
-            assertNotNull(user.acceptInvite(10000));
-        }
+			users[i].join(chat);
+		}
+		// Accept invite with all users
+		for (MockParticipant user : users) {
+			assertNotNull(user.acceptInvite(10000));
+		}
 
-        for (int i = 0; i < users.length; i++)
-        {
-            // FIXME: wait for role change otherwise we might randomly fail here
-            assertTrue(
-                i + " user should have moderator role("
-                    + users[i].getNickname() + ")",
-                ChatRoomMemberRole.MODERATOR.compareTo(
-                    users[i].getChatMember().getRole()) >= 0);
+		for (int i = 0; i < users.length; i++) {
+			// FIXME: wait for role change otherwise we might randomly fail here
+			assertTrue(i + " user should have moderator role(" + users[i].getNickname() + ")",
+					ChatRoomMemberRole.MODERATOR.compareTo(users[i].getChatMember().getRole()) >= 0);
 
-            users[i].leave();
-        }
+			users[i].leave();
+		}
 
-        testConference.stop();
-    }
+		testConference.stop();
+	}
 }

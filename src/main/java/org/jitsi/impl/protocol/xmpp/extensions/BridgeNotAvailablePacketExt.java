@@ -17,7 +17,7 @@
  */
 package org.jitsi.impl.protocol.xmpp.extensions;
 
-import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
+import net.java.sip.communicator.impl.protocol.jabber.extensions.AbstractPacketExtension;
 
 /**
  * Packet extension sent in focus MUC presence to notify users about the fact
@@ -26,15 +26,12 @@ import net.java.sip.communicator.impl.protocol.jabber.extensions.*;
  *
  * @author Pawel Domas
  */
-public class BridgeNotAvailablePacketExt
-    extends AbstractPacketExtension
-{
-    public final static String ELEMENT_NAME = "bridgeNotAvailable";
+public class BridgeNotAvailablePacketExt extends AbstractPacketExtension {
+	public final static String ELEMENT_NAME = "bridgeNotAvailable";
 
-    public final static String NAMESPACE = ConferenceIq.NAMESPACE;
+	public final static String NAMESPACE = ConferenceIq.NAMESPACE;
 
-    public BridgeNotAvailablePacketExt()
-    {
-        super(NAMESPACE, ELEMENT_NAME);
-    }
+	public BridgeNotAvailablePacketExt() {
+		super(NAMESPACE, ELEMENT_NAME);
+	}
 }

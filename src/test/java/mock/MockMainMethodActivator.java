@@ -17,9 +17,10 @@
  */
 package mock;
 
-import org.jitsi.jicofo.*;
-import org.jitsi.jicofo.xmpp.*;
-import org.osgi.framework.*;
+import org.jitsi.jicofo.FocusManager;
+import org.jitsi.jicofo.xmpp.FocusComponent;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  * Activator does the job of "main" method - executed during normal program
@@ -27,67 +28,47 @@ import org.osgi.framework.*;
  *
  * @author Pawel Domas
  */
-public class MockMainMethodActivator
-    implements BundleActivator
-{
-    private static boolean started;
+public class MockMainMethodActivator implements BundleActivator {
+	private static boolean started;
 
-    private static FocusComponent focusComponent;
+	private static FocusComponent focusComponent;
 
-    @Override
-    public void start(BundleContext context)
-        throws Exception
-    {
-        // These properties are set in OSGiHandler
-        focusComponent = new FocusComponent(
-            System.getProperty(FocusManager.HOSTNAME_PNAME),
-            -1, // whatever port in mock
-            System.getProperty(FocusManager.XMPP_DOMAIN_PNAME),
-            "focus",
-            "secret",
-            true, "focus@test.domain.net");
+	@Override
+	public void start(BundleContext context) throws Exception {
+		// These properties are set in OSGiHandler
+		focusComponent = new FocusComponent(System.getProperty(FocusManager.HOSTNAME_PNAME), -1, // whatever port in
+																									// mock
+				System.getProperty(FocusManager.XMPP_DOMAIN_PNAME), "focus", "secret", true, "focus@test.domain.net");
 
-        focusComponent.init();
+		focusComponent.init();
 
-        synchronized (MockMainMethodActivator.class)
-        {
-            started = true;
-            MockMainMethodActivator.class.notifyAll();
-        }
-    }
+		synchronized (MockMainMethodActivator.class) {
+			started = true;
+			MockMainMethodActivator.class.notifyAll();
+		}
+	}
 
-    @Override
-    public void stop(BundleContext context)
-        throws Exception
-    {
-        focusComponent.dispose();
-    }
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		focusComponent.dispose();
+	}
 
-    public static FocusComponent getFocusComponent()
-    {
-        return focusComponent;
-    }
+	public static FocusComponent getFocusComponent() {
+		return focusComponent;
+	}
 
-    public static void waitUntilStarted(long timeout)
-    {
-        synchronized (MockMainMethodActivator.class)
-        {
-            if (!started)
-            {
-                try
-                {
-                    MockMainMethodActivator.class.wait(timeout);
-                    if (!started)
-                    {
-                        throw new RuntimeException(
-                            "Failed to wait for activator to get started");
-                    }
-                }
-                catch (InterruptedException e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
+	public static void waitUntilStarted(long timeout) {
+		synchronized (MockMainMethodActivator.class) {
+			if (!started) {
+				try {
+					MockMainMethodActivator.class.wait(timeout);
+					if (!started) {
+						throw new RuntimeException("Failed to wait for activator to get started");
+					}
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	}
 }

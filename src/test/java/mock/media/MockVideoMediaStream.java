@@ -17,88 +17,75 @@
  */
 package mock.media;
 
-import org.jitsi.service.neomedia.*;
-import org.jitsi.service.neomedia.control.*;
-import org.jitsi.service.neomedia.rtp.*;
-import org.jitsi.util.event.*;
+import static org.mockito.Mockito.mock;
 
-import static org.mockito.Mockito.*;
+import java.awt.Component;
+import java.util.Map;
 
-import java.awt.*;
-import java.util.*;
+import org.jitsi.service.neomedia.QualityControl;
+import org.jitsi.service.neomedia.VideoMediaStream;
+import org.jitsi.service.neomedia.control.KeyFrameControl;
+import org.jitsi.service.neomedia.rtp.BandwidthEstimator;
+import org.jitsi.util.event.VideoListener;
 
 /**
  * {@link VideoMediaStream} mock implementation.
  *
  * @author Pawel Domas
  */
-public class MockVideoMediaStream
-    extends MockMediaStream
-    implements VideoMediaStream
-{
-    @Override
-    public void addVideoListener(VideoListener videoListener)
-    {
+public class MockVideoMediaStream extends MockMediaStream implements VideoMediaStream {
+	@Override
+	public void addVideoListener(VideoListener videoListener) {
 
-    }
+	}
 
-    @Override
-    public KeyFrameControl getKeyFrameControl()
-    {
-        return null;
-    }
+	@Override
+	public KeyFrameControl getKeyFrameControl() {
+		return null;
+	}
 
-    @Override
-    public Component getLocalVisualComponent()
-    {
-        return null;
-    }
+	@Override
+	public Component getLocalVisualComponent() {
+		return null;
+	}
 
-    @Override
-    public QualityControl getQualityControl()
-    {
-        return null;
-    }
+	@Override
+	public QualityControl getQualityControl() {
+		return null;
+	}
 
-    @Override
-    public Component getVisualComponent()
-    {
-        return null;
-    }
+	@Override
+	public Component getVisualComponent() {
+		return null;
+	}
 
-    @Override
-    public Component getVisualComponent(long l)
-    {
-        return null;
-    }
+	@Override
+	public Component getVisualComponent(long l) {
+		return null;
+	}
 
-    @Override
-    public java.util.List<Component> getVisualComponents()
-    {
-        return null;
-    }
+	@Override
+	public java.util.List<Component> getVisualComponents() {
+		return null;
+	}
 
-    @Override
-    public void movePartialDesktopStreaming(int i, int i1)
-    {
+	@Override
+	public void movePartialDesktopStreaming(int i, int i1) {
 
-    }
+	}
 
-    @Override
-    public void removeVideoListener(VideoListener videoListener)
-    {
+	@Override
+	public void removeVideoListener(VideoListener videoListener) {
 
-    }
+	}
 
-    @Override
-    public void updateQualityControl(Map<String, String> map)
-    {
+	@Override
+	public void updateQualityControl(Map<String, String> map) {
 
-    }
+	}
 
-    @Override
-    public BandwidthEstimator getOrCreateBandwidthEstimator()
-    {
-        return mock(BandwidthEstimator.class);
-    }
+	@Override
+	public BandwidthEstimator getOrCreateBandwidthEstimator() {
+		return mock(BandwidthEstimator.class);
+	}
 }
