@@ -143,6 +143,7 @@ public abstract class AbstractChannelAllocator implements Runnable {
 		List<ContentPacketExtension> offer;
 
 		offer = createOffer();
+		classLogger.debug("participant offer: " + offer);
 		if (canceled) {
 			return;
 		}
@@ -216,7 +217,7 @@ public abstract class AbstractChannelAllocator implements Runnable {
 		// be allocated from 'restartConference'
 		while (!bridgeSession.colibriConference.isDisposed() && !bridgeSession.hasFailed) {
 			try {
-				logger.info("Using " + jvb + " to allocate channels for: "
+				logger.info("["+getClass().getName()+"] Using " + jvb + " to allocate channels for: "
 						+ (participant == null ? "null" : participant.toString()));
 
 				ColibriConferenceIQ colibriChannels = doAllocateChannels(contents);

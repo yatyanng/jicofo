@@ -110,13 +110,19 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator {
 		JingleOfferFactory jingleOfferFactory = FocusBundleActivator.getJingleOfferFactory();
 
 		if (participant.hasAudioSupport()) {
+			classLogger.debug("participant does have audio support: " + address);
 			contents.add(jingleOfferFactory.createAudioContent(disableIce, useDtls, config.stereoEnabled(), enableRemb,
 					enableTcc));
+		} else {
+			classLogger.debug("participant does not have audio support: " + address);
 		}
 
 		if (participant.hasVideoSupport()) {
+			classLogger.debug("participant does have video support: " + address);
 			contents.add(jingleOfferFactory.createVideoContent(disableIce, useDtls, useRtx, enableRemb, enableTcc,
 					config.getMinBitrate(), config.getStartBitrate()));
+		} else {
+			classLogger.debug("participant does not have video support: " + address);
 		}
 
 		// Is SCTP enabled ?
@@ -134,6 +140,7 @@ public class ParticipantChannelAllocator extends AbstractChannelAllocator {
 	@Override
 	protected ColibriConferenceIQ doAllocateChannels(List<ContentPacketExtension> offer)
 			throws OperationFailedException {
+		classLogger.debug("[doAllocateChannels] "+participant.getEndpointId()+" offer: "+ offer);
 		return bridgeSession.colibriConference.createColibriChannels(participant.hasBundleSupport(),
 				participant.getEndpointId(), participant.getStatId(), true /* initiator */, offer);
 	}

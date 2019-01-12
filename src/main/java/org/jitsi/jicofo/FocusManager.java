@@ -682,7 +682,7 @@ public class FocusManager implements JitsiMeetConferenceImpl.ConferenceListener,
 						if (idleStamp == -1) {
 							continue;
 						}
-						if (System.currentTimeMillis() - idleStamp > timeout) {
+						if (System.currentTimeMillis() - idleStamp > timeout && timeout > 0) {
 							if (conference.getLogger().isInfoEnabled())
 								logger.info("Focus idle timeout for " + conference.getRoomName());
 
