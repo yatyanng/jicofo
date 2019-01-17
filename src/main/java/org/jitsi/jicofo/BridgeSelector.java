@@ -570,6 +570,7 @@ public class BridgeSelector implements SubscriptionListener, EventHandler {
 	 */
 	private static abstract class BridgeSelectionStrategy {
 		private static int initialBridgeIndex = 0;
+
 		/**
 		 * Selects a bridge to be used for a specific {@link JitsiMeetConference} and a
 		 * specific {@link Participant}.
@@ -615,20 +616,13 @@ public class BridgeSelector implements SubscriptionListener, EventHandler {
 		 * @return the selected bridge, or {@code null} if no bridge is available.
 		 */
 		private Bridge selectInitial(List<Bridge> bridges, JitsiMeetConference conference, String participantRegion) {
-			
+
 			int offset = initialBridgeIndex++;
-			// Prefer a bridge in the participant's region.
-			if (participantRegion != null) {
-				for (int i = 0; i < bridges.size(); i++) {
-					Bridge bridge = bridges.get((i + offset) % bridges.size());
-					if (bridge.isOperational() && participantRegion.equals(bridge.getRegion())) {
-						return bridge;
-					}
-				}
-			}
 			for (int i = 0; i < bridges.size(); i++) {
-				Bridge bridge = bridges.get((i + offset) % bridges.size());
-				if (bridge.isOperational()) {
+				Bridge bridge = bridges.get(Math.floorMod(i + offset, bridges.size()));
+				// Prefer a bridge in the participant's region.
+				if (bridge.isOperational()
+						&& (participantRegion == null || participantRegion.equals(bridge.getRegion()))) {
 					return bridge;
 				}
 			}
